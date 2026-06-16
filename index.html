@@ -308,6 +308,37 @@
   .auth-done .ad-ico { font-size: 20px; }
   .auth-done-sub { font-size: 13px; color: var(--ink-sub); font-weight: 500; margin-top: 2px; }
 
+  /* 계약자(타인) 명의 추가/삭제 */
+  .role-tag {
+    font-size: 11px; font-weight: 600;
+    color: var(--ink-muted);
+    background: #eef0f5;
+    border-radius: 6px;
+    padding: 2px 7px;
+    margin-left: 4px;
+    vertical-align: middle;
+  }
+  .btn-add-holder {
+    width: 100%; padding: 14px;
+    background: #fff; color: var(--primary);
+    border: 1.5px dashed var(--primary); border-radius: var(--radius-sm);
+    font-size: 14px; font-weight: 700; cursor: pointer;
+    margin-bottom: 16px; transition: background .15s;
+  }
+  .btn-add-holder:hover { background: var(--primary-soft); }
+  .holder-del {
+    margin-left: auto;
+    font-size: 12px; font-weight: 700;
+    color: var(--danger);
+    background: #fff;
+    border: 1px solid #f3b0b3;
+    border-radius: 20px;
+    padding: 5px 12px;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+  .holder-del:hover { background: #fdeced; }
+
   /* ── 입력 ── */
   .input-group { margin-bottom: 22px; }
   .input-wrap { display: flex; gap: 8px; align-items: center; }
@@ -587,26 +618,41 @@
       </div>
       <div class="info-box">
         <span class="icon">ℹ️</span>
-        <span>현금지원금은 본인 명의의 계좌로만 수령 가능합니다.</span>
+        <span>현금지원금은 본인(렌트리 회원) 명의 계좌로만 수령 가능합니다.</span>
       </div>
     </div>
 
-    <!-- 타인 명의: 명의자 정보 입력 -->
+    <!-- 타인 명의: 회원 + 계약자(타인) 두 명의로 수령 -->
     <div id="tainArea" class="holder-area hidden">
-      <div class="holder-banner">
-        <span>⚠️</span><span>타인 명의 계약 — 현금지원금 수령이 제한됩니다.</span>
+      <!-- 회원 본인 명의 (인증 완료) -->
+      <div class="profile-card">
+        <div class="profile-avatar">변</div>
+        <div>
+          <div class="profile-name">변슬기 <span class="role-tag">회원</span></div>
+          <div class="profile-meta">1997-08-11 · 010-XXXX-XXXX</div>
+        </div>
+        <span class="profile-badge">인증 완료</span>
       </div>
-      <div class="input-group">
-        <div class="field-label">명의자 이름 <span class="required">*</span></div>
-        <input type="text" placeholder="명의자 이름을 입력해 주세요" />
+
+      <!-- 계약자(타인) 명의: 인증 전 -->
+      <div id="holderAddArea">
+        <button class="btn-add-holder" onclick="openHolderAuth()">+ 계약자 명의 인증하고 추가</button>
       </div>
-      <div class="input-group">
-        <div class="field-label">명의자 생년월일 <span class="required">*</span></div>
-        <input type="text" placeholder="YYYY-MM-DD" />
+      <!-- 계약자(타인) 명의: 인증 후 (언제든 삭제 가능) -->
+      <div id="holderCard" class="hidden">
+        <div class="profile-card" style="border-color:#b5651d;background:#fff7ef;">
+          <div class="profile-avatar" style="background:#b5651d;">홍</div>
+          <div>
+            <div class="profile-name">홍길동 <span class="role-tag">계약자</span></div>
+            <div class="profile-meta">1990-01-01 · 010-YYYY-YYYY</div>
+          </div>
+          <button class="holder-del" onclick="removeHolder()">삭제</button>
+        </div>
       </div>
-      <div class="input-group">
-        <div class="field-label">명의자 연락처 <span class="required">*</span></div>
-        <input type="text" placeholder="010-0000-0000" />
+
+      <div class="info-box">
+        <span class="icon">ℹ️</span>
+        <span>현금지원금은 본인(회원) 명의 계좌와 인증된 계약자 명의 계좌, 두 명의로 나눠 수령할 수 있습니다.</span>
       </div>
     </div>
     </div><!-- /postAuth -->
@@ -719,17 +765,18 @@
   </div>
 </div>
 
-<!-- 타인 명의 확인 모달 -->
-<div class="modal-overlay" id="tainModal">
+<!-- 계약자(타인) 명의 인증 모달 -->
+<div class="modal-overlay" id="holderModal">
   <div class="modal">
-    <div class="modal-icon">⚠️</div>
-    <div class="modal-title">타인 명의로<br>계약을 진행하시겠어요?</div>
+    <div class="modal-icon">🛡️</div>
+    <div class="modal-title">계약자 명의 인증을<br>진행해 주세요</div>
     <div class="modal-desc">
-      현금지원금은 본인 명의 계좌 혹은 계약자 명의로 수령 가능합니다.
+      계약자(타인) 명의로 지원금을 받으려면 <b>계약자 본인인증</b>이 필요해요.<br>
+      인증된 명의는 언제든 삭제할 수 있어요.
     </div>
     <div class="modal-btns">
-      <button class="modal-cancel" onclick="cancelTain()">본인으로</button>
-      <button class="modal-confirm" onclick="confirmTain()">계속하기</button>
+      <button class="modal-cancel" onclick="closeHolderModal()">이전</button>
+      <button class="modal-confirm" onclick="confirmHolderAuth()">인증 시작하기</button>
     </div>
   </div>
 </div>
@@ -795,14 +842,10 @@
     el.classList.add('selected');
     if (groupId === 'cntrTypeGroup') isBusiness = el.textContent.includes('사업자');
   }
-  // 명의 선택 분기: 본인 → 프로필 노출 / 타인 → 확인 팝업
+  // 명의 선택 분기: 본인 → 회원 프로필 / 타인 → 회원 + 계약자(추가형)
   function selectName(type) {
-    if (type === 'bonin') {
-      applyBonin();
-    } else {
-      // 타인 선택 시 먼저 확인 팝업
-      document.getElementById('tainModal').classList.add('open');
-    }
+    if (type === 'bonin') applyBonin();
+    else applyTain();
   }
   function applyBonin() {
     document.getElementById('tabBonin').classList.add('active');
@@ -816,13 +859,17 @@
     document.getElementById('tainArea').classList.remove('hidden');
     document.getElementById('boninArea').classList.add('hidden');
   }
-  function confirmTain() {
-    document.getElementById('tainModal').classList.remove('open');
-    applyTain();
+  // 계약자(타인) 명의 인증 — 본인인증처럼 추가, 언제든 삭제 가능
+  function openHolderAuth() { document.getElementById('holderModal').classList.add('open'); }
+  function closeHolderModal() { document.getElementById('holderModal').classList.remove('open'); }
+  function confirmHolderAuth() {
+    closeHolderModal();
+    document.getElementById('holderAddArea').classList.add('hidden');
+    document.getElementById('holderCard').classList.remove('hidden');
   }
-  function cancelTain() {
-    document.getElementById('tainModal').classList.remove('open');
-    applyBonin(); // 본인으로 복귀
+  function removeHolder() {
+    document.getElementById('holderCard').classList.add('hidden');
+    document.getElementById('holderAddArea').classList.remove('hidden');
   }
   function selectPayment(el) {
     document.querySelectorAll('.payment-card').forEach(c => c.classList.remove('selected'));
