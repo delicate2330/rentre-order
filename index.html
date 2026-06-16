@@ -628,6 +628,30 @@
         </label>
       </div>
 
+      <!-- 사업자 전용 정보 (사업자 선택 시 노출) -->
+      <div id="bizFields" class="hidden">
+        <div class="input-group">
+          <div class="field-label">가입 유형 <span class="required">*</span></div>
+          <select class="auth-select" id="bizType">
+            <option value="" disabled selected>가입 유형을 선택해 주세요</option>
+            <option>개인사업자</option>
+            <option>법인사업자</option>
+          </select>
+        </div>
+        <div class="input-group">
+          <div class="field-label">사업자등록번호 <span class="required">*</span></div>
+          <input type="text" id="bizRegNum" placeholder="000-00-00000" />
+        </div>
+        <div class="input-group">
+          <div class="field-label">계약자 휴대폰번호 <span class="required">*</span></div>
+          <input type="text" id="bizPhone" placeholder="010-0000-0000" />
+        </div>
+        <div class="input-group">
+          <div class="field-label">계약자 생년월일 <span class="required">*</span></div>
+          <input type="text" id="bizBirth" placeholder="YYYY-MM-DD" />
+        </div>
+      </div>
+
       <div class="field-label">계약 명의 <span class="required">*</span></div>
     <div class="tab-group">
       <button class="tab-btn active" id="tabBonin" onclick="selectName('bonin')">본인 명의</button>
@@ -936,7 +960,10 @@
     const g = document.getElementById(groupId);
     g.querySelectorAll('label').forEach(l => l.classList.remove('selected'));
     el.classList.add('selected');
-    if (groupId === 'cntrTypeGroup') isBusiness = el.textContent.includes('사업자');
+    if (groupId === 'cntrTypeGroup') {
+      isBusiness = el.textContent.includes('사업자');
+      document.getElementById('bizFields').classList.toggle('hidden', !isBusiness);
+    }
   }
   // 명의 선택 분기: 본인 → 회원 프로필 / 타인 → 회원 + 계약자(추가형)
   function selectName(type) {
@@ -986,6 +1013,10 @@
     let html = '';
     html += '<div class="summary-group-title">계약자</div>';
     html += row('유형', isBusiness ? '사업자' : '개인');
+    if (isBusiness) {
+      html += row('가입유형', v('bizType') || '미선택');
+      html += row('사업자번호', v('bizRegNum'));
+    }
     html += row('명의', nameType === 'tain' ? '타인 명의' : '본인 명의');
     html += row('회원', '변슬기 (인증 완료)');
     if (nameType === 'tain') html += row('계약자', holderAdded ? '홍길동 (인증 완료)' : '미등록');
