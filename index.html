@@ -312,10 +312,10 @@
   .agree-warn {
     margin: 12px 16px 14px;
     padding: 13px 14px;
-    background: #fff4ec;
-    border: 1.5px solid #ffce9e;
+    background: #eafaf0;
+    border: 1.5px solid #95dcae;
     border-radius: var(--radius-sm);
-    font-size: 13px; color: #b5651d; line-height: 1.65; font-weight: 600;
+    font-size: 13px; color: #1f7a4d; line-height: 1.65; font-weight: 600;
   }
 
   /* 계약자(타인) 명의 추가/삭제 */
@@ -1034,7 +1034,7 @@
     if (agreed) {
       html += '<div class="summary-row"><div class="k">동의</div><div class="v" style="color:#1f9d57">✔ 특약사항 전체 동의 완료</div></div>';
       html += row('동의 시각', agreeTime ? fmtTs(agreeTime) : '-');
-      html += '<div class="agree-warn">⚠️ 본인은 위 특약사항에 <b>분명히 동의</b>했습니다. 인증·타임스탬프가 기록되었으며, 이후 "몰랐다 / 동의한 적 없다"는 주장은 효력이 없습니다.</div>';
+      html += '<div class="agree-warn">✅ 특약사항 전체 동의가 완료됐어요. 동의 시각이 함께 안전하게 기록되어, 필요할 때 언제든 다시 확인하실 수 있습니다.</div>';
     } else {
       html += '<div class="summary-row"><div class="k">동의</div><div class="v" style="color:var(--danger)">미동의 — 특약 동의 단계에서 체크 필요</div></div>';
     }
@@ -1132,6 +1132,9 @@
       document.getElementById('holderCard').classList.remove('hidden');
     }
   }
+
+  // 초기화: 첫 화면(STEP1 인증 전)에서 하단 '다음' 숨김 등 반영
+  updateUI();
 </script>
 </body>
 </html>
