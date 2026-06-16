@@ -652,6 +652,7 @@
         </div>
       </div>
 
+      <div id="nameSection">
       <div class="field-label">계약 명의 <span class="required">*</span></div>
     <div class="tab-group">
       <button class="tab-btn active" id="tabBonin" onclick="selectName('bonin')">본인 명의</button>
@@ -707,6 +708,7 @@
         <span>현금지원금은 본인(회원) 명의 계좌와 인증된 계약자 명의 계좌, 두 명의로 나눠 수령할 수 있습니다.</span>
       </div>
     </div>
+    </div><!-- /nameSection -->
     </div><!-- /postAuth -->
   </div>
 
@@ -963,6 +965,8 @@
     if (groupId === 'cntrTypeGroup') {
       isBusiness = el.textContent.includes('사업자');
       document.getElementById('bizFields').classList.toggle('hidden', !isBusiness);
+      // 사업자면 본인/타인 명의 선택 섹션 숨김
+      document.getElementById('nameSection').classList.toggle('hidden', isBusiness);
     }
   }
   // 명의 선택 분기: 본인 → 회원 프로필 / 타인 → 회원 + 계약자(추가형)
@@ -1013,13 +1017,14 @@
     let html = '';
     html += '<div class="summary-group-title">계약자</div>';
     html += row('유형', isBusiness ? '사업자' : '개인');
+    html += row('회원', '변슬기 (인증 완료)');
     if (isBusiness) {
       html += row('가입유형', v('bizType') || '미선택');
       html += row('사업자번호', v('bizRegNum'));
+    } else {
+      html += row('명의', nameType === 'tain' ? '타인 명의' : '본인 명의');
+      if (nameType === 'tain') html += row('계약자', holderAdded ? '홍길동 (인증 완료)' : '미등록');
     }
-    html += row('명의', nameType === 'tain' ? '타인 명의' : '본인 명의');
-    html += row('회원', '변슬기 (인증 완료)');
-    if (nameType === 'tain') html += row('계약자', holderAdded ? '홍길동 (인증 완료)' : '미등록');
     html += '<div class="summary-group-title">설치 주소</div>';
     html += row('주소', addr);
     html += '<div class="summary-group-title">결제</div>';
