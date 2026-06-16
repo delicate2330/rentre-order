@@ -847,7 +847,7 @@
   <!-- 하단 버튼 -->
   <div class="btn-area">
     <button class="btn-prev" id="btnPrev" onclick="prevStep()">이전</button>
-    <button class="btn-next" id="btnNext" onclick="nextStep()">다음</button>
+    <button class="btn-next" id="btnNext" onclick="nextStep()" style="display:none">다음</button>
   </div>
 </div>
 
@@ -1034,7 +1034,7 @@
     if (agreed) {
       html += '<div class="summary-row"><div class="k">동의</div><div class="v" style="color:#1f9d57">✔ 특약사항 전체 동의 완료</div></div>';
       html += row('동의 시각', agreeTime ? fmtTs(agreeTime) : '-');
-      html += '<div class="agree-warn">✅ 특약사항 전체 동의가 완료됐어요. 동의 시각이 함께 안전하게 기록되어, 필요할 때 언제든 다시 확인하실 수 있습니다.</div>';
+      html += '<div class="agree-warn">😊 특약사항 전체에 동의해 주셔서 감사합니다. 동의하신 시각도 함께 기록해 두었으니, 안심하고 진행하셔도 좋아요.</div>';
     } else {
       html += '<div class="summary-row"><div class="k">동의</div><div class="v" style="color:var(--danger)">미동의 — 특약 동의 단계에서 체크 필요</div></div>';
     }
