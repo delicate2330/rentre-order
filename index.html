@@ -604,8 +604,8 @@
 
   <!-- STEP 1 -->
   <div class="step active" id="step-1">
-    <h2 class="step-title">먼저 회원<br>본인인증을 해주세요</h2>
-    <p class="step-sub">타인 명의로 계약하셔도, 회원 본인인증은 반드시 먼저 필요해요.</p>
+    <h2 class="step-title" id="step1Title">먼저 회원<br>본인인증을 해주세요</h2>
+    <p class="step-sub" id="step1Sub">타인 명의로 계약하셔도, 회원 본인인증은 반드시 먼저 필요해요.</p>
 
     <!-- 인증 전: 게이트 -->
     <div id="authGate">
@@ -628,7 +628,7 @@
         <div>
           <div class="auth-done-title">회원 본인인증 완료 · 변슬기</div>
           <div class="auth-done-sub">1997-08-11 · 010-XXXX-XXXX</div>
-          <div class="auth-done-guide">인증이 완료됐어요. 계약 정보만 확인하고 다음으로 넘어가면 돼요 👇</div>
+          <div class="auth-done-guide">본인인증이 완료되었어요. 아래에서 계약 명의를 선택해 주세요 👇</div>
         </div>
       </div>
 
@@ -1124,6 +1124,8 @@
       authed = true;
       document.getElementById('authGate').classList.add('hidden');
       document.getElementById('postAuth').classList.remove('hidden');
+      document.getElementById('step1Title').innerHTML = '본인인증이 완료되었어요<br>계약 명의를 선택해 주세요';
+      document.getElementById('step1Sub').textContent = '계약자 유형과 명의를 선택한 뒤 다음으로 넘어가 주세요.';
       applyBonin();
       updateUI(); // '다음' 버튼 노출
     } else if (authTarget === 'holder') {
