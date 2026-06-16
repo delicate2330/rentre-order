@@ -586,6 +586,18 @@
   .summary-row { display: flex; padding: 13px 16px; border-top: 1px solid var(--line); font-size: 14px; }
   .summary-row .k { width: 92px; flex-shrink: 0; color: var(--ink-muted); font-weight: 600; }
   .summary-row .v { color: var(--ink); font-weight: 600; word-break: break-all; }
+
+  /* ── 주문 완료 화면 ── */
+  .complete-wrap { text-align: center; padding-top: 36px; }
+  .complete-icon { font-size: 60px; margin-bottom: 14px; }
+  .complete-wrap .summary-box { text-align: left; }
+  .btn-restart {
+    width: 100%; margin-top: 24px; padding: 15px;
+    background: #fff; color: var(--primary);
+    border: 1.5px solid var(--primary); border-radius: var(--radius-sm);
+    font-size: 15px; font-weight: 700; cursor: pointer;
+  }
+  .btn-restart:hover { background: var(--primary-soft); }
 </style>
 </head>
 <body>
@@ -793,8 +805,8 @@
 
   <!-- STEP 4 -->
   <div class="step" id="step-4">
-    <h2 class="step-title">사업자 고객용<br>서류를 첨부해 주세요</h2>
-    <p class="step-sub">세금계산서 발행과 계약을 위해 필요해요.</p>
+    <h2 class="step-title">사업자 서류를<br>첨부해 주세요</h2>
+    <p class="step-sub">세금계산서 발행과 사업자 계약 확인을 위해 필요해요. (가입유형·사업자번호는 1단계에서 확인했어요)</p>
 
     <div class="input-group">
       <div class="field-label">이메일 <span class="required">*</span></div>
@@ -842,6 +854,17 @@
     <h2 class="step-title">입력하신 내용을<br>확인해 주세요</h2>
     <p class="step-sub">주문 확정 전 마지막 단계예요.</p>
     <div class="summary-box" id="summaryBox"></div>
+  </div>
+
+  <!-- 주문 완료 화면 -->
+  <div class="step" id="completeScreen">
+    <div class="complete-wrap">
+      <div class="complete-icon">🎉</div>
+      <h2 class="step-title" style="text-align:center">주문이 완료되었어요</h2>
+      <p class="step-sub" style="text-align:center; margin-bottom:24px;">신청해 주셔서 감사합니다.<br>설치 일정은 곧 문자로 안내드릴게요.</p>
+      <div class="summary-box" id="completeBox"></div>
+      <button class="btn-restart" onclick="location.reload()">처음으로</button>
+    </div>
   </div>
 
   <!-- 하단 버튼 -->
@@ -948,7 +971,22 @@
     const seq = getSeq();
     const idx = seq.indexOf(currentStep);
     if (idx < seq.length - 1) { currentStep = seq[idx + 1]; updateUI(); }
-    else alert('주문이 완료되었습니다!');
+    else completeOrder();
+  }
+  // 주문 완료 화면 — 주문번호·일시·동의 시각 표시
+  function completeOrder() {
+    const d = new Date();
+    const p = n => String(n).padStart(2, '0');
+    const orderNo = 'RT' + d.getFullYear() + p(d.getMonth() + 1) + p(d.getDate()) + '-' + String(Math.floor(Math.random() * 10000)).padStart(4, '0');
+    let html = '';
+    html += '<div class="summary-row"><div class="k">주문번호</div><div class="v">' + orderNo + '</div></div>';
+    html += '<div class="summary-row"><div class="k">주문 일시</div><div class="v">' + fmtTs(d) + '</div></div>';
+    if (agreeTime) html += '<div class="summary-row"><div class="k">특약 동의</div><div class="v">' + fmtTs(agreeTime) + '</div></div>';
+    document.getElementById('completeBox').innerHTML = html;
+    document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+    document.getElementById('completeScreen').classList.add('active');
+    document.querySelector('.btn-area').style.display = 'none';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
   function prevStep() {
     const seq = getSeq();
