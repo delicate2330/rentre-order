@@ -966,6 +966,9 @@
       document.getElementById('bizFields').classList.toggle('hidden', !isBusiness);
       // 사업자면 본인/타인 명의 선택 섹션 숨김
       document.getElementById('nameSection').classList.toggle('hidden', isBusiness);
+      // 유형에 따라 제목 전환
+      document.getElementById('step1Title').innerHTML = isBusiness ? '사업자 정보를<br>입력해 주세요' : '계약 명의를<br>선택해 주세요';
+      document.getElementById('step1Sub').textContent = isBusiness ? '사업자 정보를 입력한 뒤 다음으로 넘어가 주세요.' : '계약 명의를 선택한 뒤 다음으로 넘어가 주세요.';
     }
   }
   // 명의 선택 분기: 본인 → 회원 프로필 / 타인 → 회원 + 계약자(추가형)
