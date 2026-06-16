@@ -523,7 +523,23 @@
     font-size: 34px;
   }
   .modal-title { font-size: 20px; font-weight: 800; color: var(--ink); line-height: 1.45; margin-bottom: 10px; letter-spacing: -.3px; }
-  .modal-desc { font-size: 14px; color: var(--ink-muted); line-height: 1.65; margin-bottom: 28px; }
+  .modal-desc { font-size: 14px; color: var(--ink-muted); line-height: 1.65; margin-bottom: 24px; }
+  .modal-form { text-align: left; margin-bottom: 22px; }
+  .modal-form .input-group { margin-bottom: 14px; }
+  .modal-form .input-group:last-child { margin-bottom: 0; }
+  select.auth-select {
+    width: 100%;
+    border: 1.5px solid var(--line-strong);
+    border-radius: var(--radius-sm);
+    padding: 13px 14px;
+    font-size: 15px;
+    color: var(--ink);
+    background: #fff;
+    outline: none;
+    transition: all .15s;
+    appearance: none;
+  }
+  select.auth-select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(51,70,255,.1); }
   .modal-btns { display: flex; gap: 10px; }
   .modal-cancel {
     flex: 0 0 84px;
@@ -691,24 +707,53 @@
       </div>
     </div>
 
-    <div class="input-group">
-      <div class="field-label">카드사 <span class="required">*</span></div>
-      <div class="input-wrap">
-        <input type="text" placeholder="카드사를 선택해 주세요" readonly />
-        <button class="search-btn">선택</button>
+    <!-- 카드결제 필드 -->
+    <div id="cardFields">
+      <div class="input-group">
+        <div class="field-label">카드사 <span class="required">*</span></div>
+        <div class="input-wrap">
+          <input type="text" placeholder="카드사를 선택해 주세요" readonly />
+          <button class="search-btn">선택</button>
+        </div>
+      </div>
+      <div class="input-group">
+        <div class="field-label">카드번호 <span class="required">*</span></div>
+        <input type="text" placeholder="15 또는 16자리 카드번호" />
+      </div>
+      <div class="input-group">
+        <div class="field-label">카드 만료일 <span class="required">*</span></div>
+        <input type="text" placeholder="MM / YY" style="max-width:140px;" />
+      </div>
+      <div class="input-group">
+        <div class="field-label">카드 소유자 이름 <span class="required">*</span></div>
+        <input type="text" placeholder="카드 소유자 이름" />
       </div>
     </div>
-    <div class="input-group">
-      <div class="field-label">카드번호 <span class="required">*</span></div>
-      <input type="text" placeholder="15 또는 16자리 카드번호" />
-    </div>
-    <div class="input-group">
-      <div class="field-label">카드 만료일 <span class="required">*</span></div>
-      <input type="text" placeholder="MM / YY" style="max-width:140px;" />
-    </div>
-    <div class="input-group">
-      <div class="field-label">카드 소유자 이름 <span class="required">*</span></div>
-      <input type="text" placeholder="카드 소유자 이름" />
+
+    <!-- 계좌이체 필드 -->
+    <div id="bankFields" class="hidden">
+      <div class="input-group">
+        <div class="field-label">은행 <span class="required">*</span></div>
+        <select class="auth-select">
+          <option value="" disabled selected>은행을 선택해 주세요</option>
+          <option>국민은행</option>
+          <option>신한은행</option>
+          <option>우리은행</option>
+          <option>하나은행</option>
+          <option>농협은행</option>
+          <option>기업은행</option>
+          <option>카카오뱅크</option>
+          <option>토스뱅크</option>
+        </select>
+      </div>
+      <div class="input-group">
+        <div class="field-label">계좌번호 <span class="required">*</span></div>
+        <input type="text" placeholder="‘-’ 없이 숫자만 입력" />
+      </div>
+      <div class="input-group">
+        <div class="field-label">예금주 <span class="required">*</span></div>
+        <input type="text" placeholder="예금주 이름" />
+      </div>
     </div>
   </div>
 
@@ -765,34 +810,58 @@
   </div>
 </div>
 
-<!-- 계약자(타인) 명의 인증 모달 -->
-<div class="modal-overlay" id="holderModal">
+<!-- 휴대폰 본인인증 플로우 (회원·계약자 공용) -->
+<div class="modal-overlay" id="authFlow">
   <div class="modal">
-    <div class="modal-icon">🛡️</div>
-    <div class="modal-title">계약자 명의 인증을<br>진행해 주세요</div>
-    <div class="modal-desc">
-      계약자(타인) 명의로 지원금을 받으려면 <b>계약자 본인인증</b>이 필요해요.<br>
-      인증된 명의는 언제든 삭제할 수 있어요.
+    <!-- 1단계: 정보 입력 -->
+    <div id="authStep1">
+      <div class="modal-icon">📱</div>
+      <div class="modal-title" id="authFlowTitle">본인인증을<br>진행해 주세요</div>
+      <div class="modal-desc" id="authFlowDesc">휴대폰 본인인증으로 명의를 확인합니다.</div>
+      <div class="modal-form">
+        <div class="input-group">
+          <div class="field-label">통신사 <span class="required">*</span></div>
+          <select class="auth-select">
+            <option value="" disabled selected>통신사를 선택해 주세요</option>
+            <option>SKT</option>
+            <option>KT</option>
+            <option>LG U+</option>
+            <option>알뜰폰</option>
+          </select>
+        </div>
+        <div class="input-group">
+          <div class="field-label">이름 <span class="required">*</span></div>
+          <input type="text" placeholder="이름" />
+        </div>
+        <div class="input-group">
+          <div class="field-label">생년월일 <span class="required">*</span></div>
+          <input type="text" placeholder="YYMMDD" />
+        </div>
+        <div class="input-group">
+          <div class="field-label">휴대폰 번호 <span class="required">*</span></div>
+          <input type="text" placeholder="010-0000-0000" />
+        </div>
+      </div>
+      <div class="modal-btns">
+        <button class="modal-cancel" onclick="closeAuthFlow()">닫기</button>
+        <button class="modal-confirm" onclick="authNext()">인증번호 받기</button>
+      </div>
     </div>
-    <div class="modal-btns">
-      <button class="modal-cancel" onclick="closeHolderModal()">이전</button>
-      <button class="modal-confirm" onclick="confirmHolderAuth()">인증 시작하기</button>
-    </div>
-  </div>
-</div>
-
-<!-- 본인인증 모달 -->
-<div class="modal-overlay" id="authModal">
-  <div class="modal">
-    <div class="modal-icon">🛡️</div>
-    <div class="modal-title">회원 본인인증을<br>진행해 주세요</div>
-    <div class="modal-desc">
-      <b>타인 명의로 계약하셔도</b> 회원님 본인인증이 먼저 필요해요.<br>
-      명의도용·사기 방지를 위한 절차이며, 최초 1회 약 30초면 끝나요.
-    </div>
-    <div class="modal-btns">
-      <button class="modal-cancel" onclick="closeModal()">이전</button>
-      <button class="modal-confirm" onclick="startAuth()">인증 시작하기</button>
+    <!-- 2단계: 인증번호 입력 -->
+    <div id="authStep2" class="hidden">
+      <div class="modal-icon">🔑</div>
+      <div class="modal-title">인증번호를<br>입력해 주세요</div>
+      <div class="modal-desc">문자로 받은 6자리 인증번호를 입력하세요.<br><span style="font-size:12px;">(데모 — 아무 값이나 입력하면 인증됩니다)</span></div>
+      <div class="modal-form">
+        <div class="input-group">
+          <div class="field-label">인증번호 <span class="required">*</span></div>
+          <input type="text" placeholder="6자리 인증번호" />
+        </div>
+      </div>
+      <div class="modal-btns">
+        <button class="modal-cancel" onclick="authBack()">이전</button>
+        <button class="modal-confirm" onclick="authComplete()">인증 완료</button>
+      </div>
     </div>
   </div>
 </div>
@@ -859,21 +928,18 @@
     document.getElementById('tainArea').classList.remove('hidden');
     document.getElementById('boninArea').classList.add('hidden');
   }
-  // 계약자(타인) 명의 인증 — 본인인증처럼 추가, 언제든 삭제 가능
-  function openHolderAuth() { document.getElementById('holderModal').classList.add('open'); }
-  function closeHolderModal() { document.getElementById('holderModal').classList.remove('open'); }
-  function confirmHolderAuth() {
-    closeHolderModal();
-    document.getElementById('holderAddArea').classList.add('hidden');
-    document.getElementById('holderCard').classList.remove('hidden');
-  }
+  // 계약자(타인) 명의: 인증 플로우로 추가, 언제든 삭제 가능
   function removeHolder() {
     document.getElementById('holderCard').classList.add('hidden');
     document.getElementById('holderAddArea').classList.remove('hidden');
   }
+  // 결제 방식 분기: 카드결제 ↔ 계좌이체 필드 전환
   function selectPayment(el) {
     document.querySelectorAll('.payment-card').forEach(c => c.classList.remove('selected'));
     el.classList.add('selected');
+    const isCard = el.textContent.includes('카드결제');
+    document.getElementById('cardFields').classList.toggle('hidden', !isCard);
+    document.getElementById('bankFields').classList.toggle('hidden', isCard);
   }
   function markFile(boxId, input) {
     const box = document.getElementById(boxId);
@@ -887,15 +953,43 @@
     setTimeout(() => label.classList.toggle('checked', cb.checked), 0);
   }
 
-  function openAuth() { document.getElementById('authModal').classList.add('open'); }
-  function closeModal() { document.getElementById('authModal').classList.remove('open'); }
-  // 인증 완료 → 명의 선택 영역 잠금 해제 (단계 이동 X)
-  function startAuth() {
-    authed = true;
-    closeModal();
-    document.getElementById('authGate').classList.add('hidden');
-    document.getElementById('postAuth').classList.remove('hidden');
-    applyBonin();
+  // ── 휴대폰 본인인증 플로우 (회원·계약자 공용) ──
+  let authTarget = null; // 'member' | 'holder'
+  function openAuth() {
+    authTarget = 'member';
+    prepAuthFlow('회원 본인인증을<br>진행해 주세요', '명의도용·사기 방지를 위해 회원님 본인을 휴대폰으로 인증합니다. 최초 1회만 진행돼요.');
+  }
+  function openHolderAuth() {
+    authTarget = 'holder';
+    prepAuthFlow('계약자 명의 인증을<br>진행해 주세요', '계약자(타인) 명의를 휴대폰으로 인증합니다. 인증 후 언제든 삭제할 수 있어요.');
+  }
+  function prepAuthFlow(title, desc) {
+    document.getElementById('authFlowTitle').innerHTML = title;
+    document.getElementById('authFlowDesc').innerHTML = desc;
+    document.getElementById('authStep1').classList.remove('hidden');
+    document.getElementById('authStep2').classList.add('hidden');
+    document.getElementById('authFlow').classList.add('open');
+  }
+  function closeAuthFlow() { document.getElementById('authFlow').classList.remove('open'); }
+  function authNext() {
+    document.getElementById('authStep1').classList.add('hidden');
+    document.getElementById('authStep2').classList.remove('hidden');
+  }
+  function authBack() {
+    document.getElementById('authStep2').classList.add('hidden');
+    document.getElementById('authStep1').classList.remove('hidden');
+  }
+  function authComplete() {
+    closeAuthFlow();
+    if (authTarget === 'member') {
+      authed = true;
+      document.getElementById('authGate').classList.add('hidden');
+      document.getElementById('postAuth').classList.remove('hidden');
+      applyBonin();
+    } else if (authTarget === 'holder') {
+      document.getElementById('holderAddArea').classList.add('hidden');
+      document.getElementById('holderCard').classList.remove('hidden');
+    }
   }
 </script>
 </body>
