@@ -297,16 +297,26 @@
   .auth-cta-btn:hover { background: var(--primary-dark); }
   /* 인증 완료 배지 */
   .auth-done {
-    display: flex; align-items: center; gap: 12px;
+    display: flex; align-items: flex-start; gap: 12px;
     background: #eafaf0;
     border: 1.5px solid #95dcae;
     border-radius: var(--radius-sm);
-    padding: 14px 16px;
+    padding: 16px;
     margin-bottom: 24px;
     font-size: 14px; font-weight: 700; color: var(--ink);
   }
-  .auth-done .ad-ico { font-size: 20px; }
-  .auth-done-sub { font-size: 13px; color: var(--ink-sub); font-weight: 500; margin-top: 2px; }
+  .auth-done .ad-ico { font-size: 22px; line-height: 1.2; }
+  .auth-done-title { font-size: 16px; font-weight: 800; color: var(--ink); letter-spacing: -.2px; }
+  .auth-done-sub { font-size: 13px; color: var(--ink-sub); font-weight: 500; margin-top: 3px; }
+  .auth-done-guide { font-size: 13px; color: #1f9d57; font-weight: 700; margin-top: 8px; }
+  .agree-warn {
+    margin: 12px 16px 14px;
+    padding: 13px 14px;
+    background: #fff4ec;
+    border: 1.5px solid #ffce9e;
+    border-radius: var(--radius-sm);
+    font-size: 13px; color: #b5651d; line-height: 1.65; font-weight: 600;
+  }
 
   /* 계약자(타인) 명의 추가/삭제 */
   .role-tag {
@@ -615,7 +625,11 @@
     <div id="postAuth" class="hidden">
       <div class="auth-done">
         <span class="ad-ico">✅</span>
-        <div>회원 본인인증 완료<div class="auth-done-sub">변슬기 · 010-XXXX-XXXX</div></div>
+        <div>
+          <div class="auth-done-title">회원 본인인증 완료 · 변슬기</div>
+          <div class="auth-done-sub">1997-08-11 · 010-XXXX-XXXX</div>
+          <div class="auth-done-guide">인증이 완료됐어요. 계약 정보만 확인하고 다음으로 넘어가면 돼요 👇</div>
+        </div>
       </div>
 
       <div class="field-label">계약자 유형 <span class="required">*</span></div>
@@ -661,32 +675,14 @@
 
     <!-- 본인 명의: 등록된 본인 프로필 노출 -->
     <div id="boninArea">
-      <div class="profile-card">
-        <div class="profile-avatar">변</div>
-        <div>
-          <div class="profile-name">변슬기</div>
-          <div class="profile-meta">1997-08-11 · 010-XXXX-XXXX</div>
-        </div>
-        <span class="profile-badge">본인인증 완료</span>
-      </div>
       <div class="info-box">
         <span class="icon">ℹ️</span>
-        <span>현금지원금은 본인(렌트리 회원) 명의 계좌로만 수령 가능합니다.</span>
+        <span>계약자는 회원 본인(변슬기)입니다. 현금지원금은 본인(렌트리 회원) 명의 계좌로만 수령 가능합니다.</span>
       </div>
     </div>
 
     <!-- 타인 명의: 회원 + 계약자(타인) 두 명의로 수령 -->
     <div id="tainArea" class="holder-area hidden">
-      <!-- 회원 본인 명의 (인증 완료) -->
-      <div class="profile-card">
-        <div class="profile-avatar">변</div>
-        <div>
-          <div class="profile-name">변슬기 <span class="role-tag">회원</span></div>
-          <div class="profile-meta">1997-08-11 · 010-XXXX-XXXX</div>
-        </div>
-        <span class="profile-badge">인증 완료</span>
-      </div>
-
       <!-- 계약자(타인) 명의: 인증 전 -->
       <div id="holderAddArea">
         <button class="btn-add-holder" onclick="openHolderAuth()">+ 계약자 명의 인증하고 추가</button>
@@ -937,7 +933,10 @@
     document.getElementById('curStep').textContent = idx + 1;
     document.getElementById('totStep').textContent = seq.length;
     document.getElementById('btnPrev').style.display = idx > 0 ? 'block' : 'none';
-    document.getElementById('btnNext').textContent = idx === seq.length - 1 ? '주문 완료' : '다음';
+    const btnNext = document.getElementById('btnNext');
+    btnNext.textContent = idx === seq.length - 1 ? '주문 완료' : '다음';
+    // STEP1은 본인인증 완료 전까지 '다음' 숨김
+    btnNext.style.display = (currentStep === 1 && !authed) ? 'none' : 'block';
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
@@ -1029,6 +1028,16 @@
     html += row('주소', addr);
     html += '<div class="summary-group-title">결제</div>';
     html += row('방식', pay);
+    // 특약 동의 내역
+    html += '<div class="summary-group-title">특약 동의</div>';
+    const agreed = document.getElementById('agreeCheck').checked;
+    if (agreed) {
+      html += '<div class="summary-row"><div class="k">동의</div><div class="v" style="color:#1f9d57">✔ 특약사항 전체 동의 완료</div></div>';
+      html += row('동의 시각', agreeTime ? fmtTs(agreeTime) : '-');
+      html += '<div class="agree-warn">⚠️ 본인은 위 특약사항에 <b>분명히 동의</b>했습니다. 인증·타임스탬프가 기록되었으며, 이후 "몰랐다 / 동의한 적 없다"는 주장은 효력이 없습니다.</div>';
+    } else {
+      html += '<div class="summary-row"><div class="k">동의</div><div class="v" style="color:var(--danger)">미동의 — 특약 동의 단계에서 체크 필요</div></div>';
+    }
     document.getElementById('summaryBox').innerHTML = html;
   }
   function markFile(boxId, input) {
@@ -1038,9 +1047,17 @@
       box.innerHTML = '<div class="upload-icon">✅</div>' + input.files[0].name;
     }
   }
+  let agreeTime = null; // 특약 동의 시각
   function toggleTerms(label) {
     const cb = label.querySelector('input');
-    setTimeout(() => label.classList.toggle('checked', cb.checked), 0);
+    setTimeout(() => {
+      label.classList.toggle('checked', cb.checked);
+      agreeTime = cb.checked ? new Date() : null;
+    }, 0);
+  }
+  function fmtTs(d) {
+    const p = n => String(n).padStart(2, '0');
+    return d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate()) + ' ' + p(d.getHours()) + ':' + p(d.getMinutes()) + ':' + p(d.getSeconds());
   }
 
   // ── 휴대폰 본인인증 플로우 (회원·계약자 공용) ──
@@ -1108,6 +1125,7 @@
       document.getElementById('authGate').classList.add('hidden');
       document.getElementById('postAuth').classList.remove('hidden');
       applyBonin();
+      updateUI(); // '다음' 버튼 노출
     } else if (authTarget === 'holder') {
       holderAdded = true;
       document.getElementById('holderAddArea').classList.add('hidden');
