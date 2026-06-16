@@ -567,6 +567,15 @@
     cursor: pointer;
   }
   .modal-confirm:hover { background: var(--primary-dark); }
+  .modal-confirm:disabled { opacity: .45; cursor: not-allowed; background: var(--primary); }
+  input:disabled { background: #f1f2f7; color: var(--ink-muted); cursor: not-allowed; }
+
+  /* ── 입력 확인 요약 ── */
+  .summary-box { border: 1px solid var(--line); border-radius: var(--radius-sm); overflow: hidden; }
+  .summary-group-title { font-size: 12px; font-weight: 700; color: var(--primary); padding: 13px 16px 5px; background: #fafbfd; text-transform: none; }
+  .summary-row { display: flex; padding: 13px 16px; border-top: 1px solid var(--line); font-size: 14px; }
+  .summary-row .k { width: 92px; flex-shrink: 0; color: var(--ink-muted); font-weight: 600; }
+  .summary-row .v { color: var(--ink); font-weight: 600; word-break: break-all; }
 </style>
 </head>
 <body>
@@ -685,13 +694,13 @@
     <div class="input-group">
       <div class="field-label">설치 주소 <span class="required">*</span></div>
       <div class="input-wrap">
-        <input type="text" placeholder="주소를 입력해 주세요" />
+        <input type="text" id="addrMain" placeholder="주소를 입력해 주세요" />
         <button class="search-btn">검색</button>
       </div>
     </div>
     <div class="input-group">
       <div class="field-label">상세주소</div>
-      <input type="text" placeholder="동·호수 등 상세주소" />
+      <input type="text" id="addrDetail" placeholder="동·호수 등 상세주소" />
     </div>
   </div>
 
@@ -737,7 +746,7 @@
     <div id="bankFields" class="hidden">
       <div class="input-group">
         <div class="field-label">은행 <span class="required">*</span></div>
-        <select class="auth-select">
+        <select class="auth-select" id="bankSelect">
           <option value="" disabled selected>은행을 선택해 주세요</option>
           <option>국민은행</option>
           <option>신한은행</option>
@@ -751,11 +760,11 @@
       </div>
       <div class="input-group">
         <div class="field-label">계좌번호 <span class="required">*</span></div>
-        <input type="text" placeholder="‘-’ 없이 숫자만 입력" />
+        <input type="text" id="accountNum" placeholder="‘-’ 없이 숫자만 입력" />
       </div>
       <div class="input-group">
         <div class="field-label">예금주 <span class="required">*</span></div>
-        <input type="text" placeholder="예금주 이름" />
+        <input type="text" id="accountHolder" placeholder="예금주 이름" />
       </div>
     </div>
   </div>
@@ -804,6 +813,13 @@
       <input type="checkbox" id="agreeCheck" />
       특약사항에 모두 동의합니다.
     </label>
+  </div>
+
+  <!-- STEP 6 -->
+  <div class="step" id="step-6">
+    <h2 class="step-title">입력하신 내용을<br>확인해 주세요</h2>
+    <p class="step-sub">주문 확정 전 마지막 단계예요.</p>
+    <div class="summary-box" id="summaryBox"></div>
   </div>
 
   <!-- 하단 버튼 -->
@@ -858,7 +874,7 @@
       <div class="modal-form">
         <div class="input-group">
           <div class="field-label">인증번호 <span class="required">*</span></div>
-          <input type="text" placeholder="6자리 인증번호" />
+          <input type="text" id="authCodeInput" placeholder="6자리 인증번호" />
           <div class="auth-timer-row">
             <span>남은 시간 <b id="authTimer">3:00</b></span>
             <button class="auth-resend" onclick="resendCode()">인증번호 재전송</button>
@@ -867,7 +883,7 @@
       </div>
       <div class="modal-btns">
         <button class="modal-cancel" onclick="authBack()">이전</button>
-        <button class="modal-confirm" onclick="authComplete()">인증 완료</button>
+        <button class="modal-confirm" id="authDoneBtn" onclick="authComplete()">인증 완료</button>
       </div>
     </div>
   </div>
@@ -877,13 +893,17 @@
   let currentStep = 1;          // 현재 화면의 실제 step id
   let authed = false;           // 회원 본인인증 여부
   let isBusiness = false;       // 사업자 여부 (개인이면 STEP4 건너뜀)
+  let nameType = 'bonin';       // 'bonin' | 'tain'
+  let payMethod = 'card';       // 'card' | 'bank'
+  let holderAdded = false;      // 계약자(타인) 명의 추가 여부
 
-  // 사업자만 STEP4(서류) 포함. 개인은 4 제외.
-  function getSeq() { return isBusiness ? [1, 2, 3, 4, 5] : [1, 2, 3, 5]; }
+  // 사업자만 STEP4(서류) 포함. 개인은 4 제외. 마지막은 6(요약).
+  function getSeq() { return isBusiness ? [1, 2, 3, 4, 5, 6] : [1, 2, 3, 5, 6]; }
 
   function updateUI() {
     const seq = getSeq();
     const idx = seq.indexOf(currentStep);
+    if (currentStep === 6) buildSummary();
     document.querySelectorAll('.step').forEach((el, i) => {
       el.classList.toggle('active', i + 1 === currentStep);
     });
@@ -924,12 +944,14 @@
     else applyTain();
   }
   function applyBonin() {
+    nameType = 'bonin';
     document.getElementById('tabBonin').classList.add('active');
     document.getElementById('tabTain').classList.remove('active');
     document.getElementById('boninArea').classList.remove('hidden');
     document.getElementById('tainArea').classList.add('hidden');
   }
   function applyTain() {
+    nameType = 'tain';
     document.getElementById('tabTain').classList.add('active');
     document.getElementById('tabBonin').classList.remove('active');
     document.getElementById('tainArea').classList.remove('hidden');
@@ -937,6 +959,7 @@
   }
   // 계약자(타인) 명의: 인증 플로우로 추가, 언제든 삭제 가능
   function removeHolder() {
+    holderAdded = false;
     document.getElementById('holderCard').classList.add('hidden');
     document.getElementById('holderAddArea').classList.remove('hidden');
   }
@@ -945,8 +968,32 @@
     document.querySelectorAll('.payment-card').forEach(c => c.classList.remove('selected'));
     el.classList.add('selected');
     const isCard = el.textContent.includes('카드결제');
+    payMethod = isCard ? 'card' : 'bank';
     document.getElementById('cardFields').classList.toggle('hidden', !isCard);
     document.getElementById('bankFields').classList.toggle('hidden', isCard);
+  }
+  // 입력 확인 요약 생성
+  function buildSummary() {
+    const v = id => { const e = document.getElementById(id); return e ? e.value.trim() : ''; };
+    const row = (k, val) => '<div class="summary-row"><div class="k">' + k + '</div><div class="v">' + (val || '미입력') + '</div></div>';
+    const addr = [v('addrMain'), v('addrDetail')].filter(Boolean).join(' ');
+    let pay;
+    if (payMethod === 'bank') {
+      pay = '계좌이체 · ' + (v('bankSelect') || '은행 미선택') + (v('accountNum') ? ' · ' + v('accountNum') : '') + (v('accountHolder') ? ' · ' + v('accountHolder') : '');
+    } else {
+      pay = '카드결제';
+    }
+    let html = '';
+    html += '<div class="summary-group-title">계약자</div>';
+    html += row('유형', isBusiness ? '사업자' : '개인');
+    html += row('명의', nameType === 'tain' ? '타인 명의' : '본인 명의');
+    html += row('회원', '변슬기 (인증 완료)');
+    if (nameType === 'tain') html += row('계약자', holderAdded ? '홍길동 (인증 완료)' : '미등록');
+    html += '<div class="summary-group-title">설치 주소</div>';
+    html += row('주소', addr);
+    html += '<div class="summary-group-title">결제</div>';
+    html += row('방식', pay);
+    document.getElementById('summaryBox').innerHTML = html;
   }
   function markFile(boxId, input) {
     const box = document.getElementById(boxId);
@@ -992,10 +1039,24 @@
     clearInterval(authTimerId);
     let t = 180;
     const el = document.getElementById('authTimer');
+    const input = document.getElementById('authCodeInput');
+    const doneBtn = document.getElementById('authDoneBtn');
+    // 재시작 시 입력 활성화
+    input.disabled = false;
+    input.placeholder = '6자리 인증번호';
+    doneBtn.disabled = false;
     el.textContent = '3:00';
     authTimerId = setInterval(() => {
       t--;
-      if (t < 0) { clearInterval(authTimerId); el.textContent = '시간 만료'; return; }
+      if (t < 0) {
+        clearInterval(authTimerId);
+        el.textContent = '인증번호를 재전송하세요';
+        input.value = '';
+        input.disabled = true;
+        input.placeholder = '인증 시간이 만료되었어요';
+        doneBtn.disabled = true;
+        return;
+      }
       el.textContent = Math.floor(t / 60) + ':' + String(t % 60).padStart(2, '0');
     }, 1000);
   }
@@ -1012,6 +1073,7 @@
       document.getElementById('postAuth').classList.remove('hidden');
       applyBonin();
     } else if (authTarget === 'holder') {
+      holderAdded = true;
       document.getElementById('holderAddArea').classList.add('hidden');
       document.getElementById('holderCard').classList.remove('hidden');
     }
