@@ -54,6 +54,14 @@
   .btn-area { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 480px; padding: 14px 20px calc(20px + env(safe-area-inset-bottom)); background: #fff; border-top: 1px solid var(--line); }
   .btn-edit { width: 100%; padding: 16px; background: var(--primary); color: #fff; border: none; border-radius: 12px; font-size: 16px; font-weight: 800; cursor: pointer; }
   .btn-edit:hover { background: var(--primary-dark); }
+  /* 혜택 특약사항 동의 (동의 완료 상태) */
+  .terms-sub { font-size: 13px; color: var(--ink-muted); margin-bottom: 12px; }
+  .terms-box { border: 1px solid var(--line); border-radius: var(--radius-sm); padding: 16px; font-size: 13px; color: var(--ink-sub); line-height: 1.9; margin-bottom: 14px; background: #fafbfd; }
+  .terms-box p { margin-bottom: 4px; }
+  .terms-box .highlight { color: #e5484d; font-weight: 600; }
+  .terms-check { display: flex; align-items: center; gap: 11px; font-size: 15px; font-weight: 700; color: var(--ink); padding: 16px; border: 1.5px solid var(--primary); background: var(--primary-soft); border-radius: var(--radius-sm); }
+  .terms-check input { width: 20px; height: 20px; accent-color: var(--primary); }
+  .agree-stamp { margin-top: 12px; font-size: 13px; color: #1f7a4d; font-weight: 600; }
 </style>
 </head>
 <body>
@@ -101,17 +109,22 @@
   </div>
   <div class="divider"></div>
 
-  <!-- 특약사항 동의 (추가) -->
+  <!-- 혜택 관련 특약사항 동의 (STEP5 형식 그대로, 동의 완료 상태) -->
   <div class="agree-section">
-    <div class="section-title">특약사항 동의</div>
-    <div class="agree-box">
-      <div class="agree-title">특약사항에 동의하셨습니다.</div>
-      <div class="agree-row"><div class="k">동의 시각</div><div class="v" id="agreeTime">2026-06-17 14:32:05</div></div>
-      <div class="agree-terms">
-        • 13개월 내 해지 시 지원금 청구 &nbsp;• 3개월 이상 렌탈료 체납 시 지원금 청구<br>
-        • 당월 설치 기준 견적/지원금 &nbsp;• 지원금과 위약금은 별개 &nbsp;• 타사 보상은 현장 타사 정수기 필요
-      </div>
+    <div class="section-title">혜택 관련 특약사항 동의</div>
+    <p class="terms-sub">아래 내용에 동의하셨습니다.</p>
+    <div class="terms-box">
+      <p>• 13개월 내 해지 시 지원금이 고객에게 청구됩니다.</p>
+      <p>• 3개월 이상 렌탈요금 체납 시 지원금이 고객에게 청구됩니다.</p>
+      <p>• 당월 설치 기준 [견적/지원금]입니다. 익월 설치 시 지원금이 변동될 수 있습니다.</p>
+      <p>• 지원금과 위약금은 별개입니다.</p>
+      <p class="highlight">• ⭐ 타사 보상은 현장에 꼭 타사 정수기가 있어야만 프로모션 적용이 가능합니다.</p>
     </div>
+    <label class="terms-check">
+      <input type="checkbox" checked disabled />
+      특약사항에 모두 동의합니다.
+    </label>
+    <div class="agree-stamp">동의 시각 <b id="agreeTime">2026-06-17 18:13:06</b></div>
   </div>
 </div>
 
