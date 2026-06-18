@@ -849,13 +849,6 @@
     </label>
   </div>
 
-  <!-- STEP 6 -->
-  <div class="step" id="step-6">
-    <h2 class="step-title">입력하신 내용을<br>확인해 주세요</h2>
-    <p class="step-sub">주문 확정 전 마지막 단계예요.</p>
-    <div class="summary-box" id="summaryBox"></div>
-  </div>
-
   <!-- 주문 완료 화면 -->
   <div class="step" id="completeScreen">
     <div class="complete-wrap">
@@ -943,12 +936,11 @@
   let holderAdded = false;      // 계약자(타인) 명의 추가 여부
 
   // 사업자만 STEP4(서류) 포함. 개인은 4 제외. 마지막은 6(요약).
-  function getSeq() { return isBusiness ? [1, 2, 3, 4, 5, 6] : [1, 2, 3, 5, 6]; }
+  function getSeq() { return isBusiness ? [1, 2, 3, 4, 5] : [1, 2, 3, 5]; }
 
   function updateUI() {
     const seq = getSeq();
     const idx = seq.indexOf(currentStep);
-    if (currentStep === 6) buildSummary();
     document.querySelectorAll('.step').forEach((el, i) => {
       el.classList.toggle('active', i + 1 === currentStep);
     });
