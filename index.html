@@ -303,6 +303,7 @@
   .afm-arrow { font-size: 24px; color: var(--ink-muted); }
   .afm-branch { display: flex; flex-direction: column; gap: 10px; }
   .afm-pill { border: 1.5px solid var(--line-strong); background: #fff; border-radius: 20px; padding: 9px 16px; font-size: 14px; font-weight: 700; color: var(--ink-sub); white-space: nowrap; text-align: center; }
+  .auth-hero-title { font-size: 18px; font-weight: 800; color: var(--ink); margin-bottom: 8px; letter-spacing: -.3px; }
   .auth-flow-note { font-size: 14px; color: var(--ink); font-weight: 600; line-height: 1.6; margin-bottom: 22px; }
   .auth-flow-note .afm-sub { display: block; font-size: 12px; color: var(--ink-muted); font-weight: 500; margin-top: 6px; }
   /* 인증 완료 배지 */
@@ -632,18 +633,9 @@
     <!-- 인증 전: 게이트 -->
     <div id="authGate">
       <div class="auth-cta-card">
-        <div class="auth-flow-map">
-          <div class="afm-key">
-            <div class="afm-ico">🛡️</div>
-            <div class="afm-keylabel">회원<br>본인인증</div>
-          </div>
-          <div class="afm-arrow">→</div>
-          <div class="afm-branch">
-            <div class="afm-pill">본인명의 진행</div>
-            <div class="afm-pill">타인명의 진행</div>
-          </div>
-        </div>
-        <p class="auth-flow-note">본인명의든 타인명의든, <b>회원 본인인증이 가장 먼저예요.</b><span class="afm-sub">명의도용·사기 방지 절차 · 약 30초, 최초 1회</span></p>
+        <div class="afm-ico" style="margin:0 auto 16px;">🛡️</div>
+        <div class="auth-hero-title">회원 본인인증이 먼저예요</div>
+        <p class="auth-flow-note"><b>본인 명의</b>도 <b>타인 명의</b>도, 회원 본인인증을 마쳐야 계약할 수 있어요.<span class="afm-sub">명의도용·사기 방지 절차 · 약 30초, 최초 1회</span></p>
         <button class="auth-cta-btn" onclick="openAuth()">본인인증 시작하기</button>
       </div>
     </div>
