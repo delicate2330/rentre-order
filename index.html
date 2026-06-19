@@ -627,15 +627,15 @@
 
   <!-- STEP 1 -->
   <div class="step active" id="step-1">
-    <h2 class="step-title" id="step1Title">먼저 회원<br>본인인증을 해주세요</h2>
+    <h2 class="step-title" id="step1Title">먼저 회원<br>본인인증을 해주세요.</h2>
     <p class="step-sub" id="step1Sub"></p>
 
     <!-- 인증 전: 게이트 -->
     <div id="authGate">
       <div class="auth-cta-card">
-        <div class="afm-ico" style="margin:0 auto 16px;">🛡️</div>
-        <div class="auth-hero-title">회원 본인인증이 먼저예요</div>
-        <p class="auth-flow-note">인증을 마치면 <b>본인</b> / <b>타인</b> 명의를 선택할 수 있어요.<span class="afm-sub">명의도용·사기 방지 절차 · 약 30초, 최초 1회</span></p>
+        <div class="afm-ico" style="margin:0 auto 16px;">🪪</div>
+        <div class="auth-hero-title">휴대폰으로 본인인증</div>
+        <p class="auth-flow-note">본인 명의도, 타인 명의도 회원 본인인증 후 진행돼요.<span class="afm-sub">안전한 계약을 위한 절차 · 30초 · 최초 1회</span></p>
         <button class="auth-cta-btn" onclick="openAuth()">본인인증 시작하기</button>
       </div>
     </div>
@@ -647,7 +647,6 @@
         <div>
           <div class="auth-done-title">회원 본인인증 완료 · 변슬기</div>
           <div class="auth-done-sub">1997-08-11 · 010-XXXX-XXXX</div>
-          <div class="auth-done-guide">아래에서 계약 명의를 선택해 주세요 👇</div>
         </div>
       </div>
 
@@ -856,17 +855,6 @@
     </label>
   </div>
 
-  <!-- 주문 완료 화면 -->
-  <div class="step" id="completeScreen">
-    <div class="complete-wrap">
-      <div class="complete-icon">🎉</div>
-      <h2 class="step-title" style="text-align:center">주문이 완료되었어요</h2>
-      <p class="step-sub" style="text-align:center; margin-bottom:24px;">신청해 주셔서 감사합니다.<br>설치 일정은 곧 문자로 안내드릴게요.</p>
-      <div class="summary-box" id="completeBox"></div>
-      <button class="btn-restart" onclick="location.reload()">처음으로</button>
-    </div>
-  </div>
-
   <!-- 하단 버튼 -->
   <div class="btn-area">
     <button class="btn-prev" id="btnPrev" onclick="prevStep()">이전</button>
@@ -956,7 +944,7 @@
     document.getElementById('totStep').textContent = seq.length;
     document.getElementById('btnPrev').style.display = idx > 0 ? 'block' : 'none';
     const btnNext = document.getElementById('btnNext');
-    btnNext.textContent = idx === seq.length - 1 ? '주문 완료' : '다음';
+    btnNext.textContent = idx === seq.length - 1 ? '주문 확정하기' : '다음';
     // STEP1은 본인인증 완료 전까지 '다음' 숨김
     btnNext.style.display = (currentStep === 1 && !authed) ? 'none' : 'block';
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -970,22 +958,7 @@
     const seq = getSeq();
     const idx = seq.indexOf(currentStep);
     if (idx < seq.length - 1) { currentStep = seq[idx + 1]; updateUI(); }
-    else completeOrder();
-  }
-  // 주문 완료 화면 — 주문번호·일시·동의 시각 표시
-  function completeOrder() {
-    const d = new Date();
-    const p = n => String(n).padStart(2, '0');
-    const orderNo = 'RT' + d.getFullYear() + p(d.getMonth() + 1) + p(d.getDate()) + '-' + String(Math.floor(Math.random() * 10000)).padStart(4, '0');
-    let html = '';
-    html += '<div class="summary-row"><div class="k">주문번호</div><div class="v">' + orderNo + '</div></div>';
-    html += '<div class="summary-row"><div class="k">주문 일시</div><div class="v">' + fmtTs(d) + '</div></div>';
-    if (agreeTime) html += '<div class="summary-row"><div class="k">특약 동의</div><div class="v">' + fmtTs(agreeTime) + '</div></div>';
-    document.getElementById('completeBox').innerHTML = html;
-    document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
-    document.getElementById('completeScreen').classList.add('active');
-    document.querySelector('.btn-area').style.display = 'none';
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    else alert('주문이 확정되었습니다!');
   }
   function prevStep() {
     const seq = getSeq();
