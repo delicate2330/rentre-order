@@ -304,8 +304,10 @@
   .afm-branch { display: flex; flex-direction: column; gap: 10px; }
   .afm-pill { border: 1.5px solid var(--line-strong); background: #fff; border-radius: 20px; padding: 9px 16px; font-size: 14px; font-weight: 700; color: var(--ink-sub); white-space: nowrap; text-align: center; }
   .auth-hero-title { font-size: 18px; font-weight: 800; color: var(--ink); margin-bottom: 8px; letter-spacing: -.3px; }
-  .auth-flow-note { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 4px; font-size: 14px; color: var(--ink); font-weight: 600; line-height: 1.5; margin-bottom: 22px; word-break: keep-all; letter-spacing: 0; }
-  .auth-flow-note .afm-sub { flex-basis: 100%; font-size: 12px; color: var(--ink-muted); font-weight: 500; margin-top: 4px; }
+  .auth-flow-note { font-size: 14px; color: var(--ink); font-weight: 600; line-height: 1.6; margin-bottom: 22px; word-break: keep-all; }
+  .num1 { color: var(--ink); }
+  .num2 { color: var(--primary); }
+  .auth-flow-note .afm-sub { display: block; font-size: 12px; color: var(--ink-muted); font-weight: 500; margin-top: 6px; }
   .kw { color: var(--primary); font-weight: 700; }
   .chk { color: var(--primary); font-weight: 800; margin-right: 3px; }
   .stepnum { display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; border-radius: 50%; background: var(--ink); color: #fff; font-size: 11px; font-weight: 700; flex-shrink: 0; }
@@ -641,7 +643,7 @@
           <svg viewBox="0 0 24 24" width="34" height="34" fill="#16192b" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 20.5C4 16.4 7.6 14 12 14s8 2.4 8 6.5V21H4z"/></svg>
         </div>
         <div class="auth-hero-title">휴대폰으로 본인인증</div>
-        <p class="auth-flow-note"><span class="stepnum">1</span><span>본인인증 이후</span><span class="stepnum blue">2</span><span class="kw">타인명의</span><span>진행이 가능해요.</span><span class="afm-sub">안전한 계약을 위한 절차 · 30초 · 최초 1회</span></p>
+        <p class="auth-flow-note"><b class="num1">①</b> 본인인증 이후 <b class="num2">②</b> <span class="kw">타인명의</span> 진행이 가능해요.<span class="afm-sub">안전한 계약을 위한 절차 · 30초 · 최초 1회</span></p>
         <button class="auth-cta-btn" onclick="openAuth()">본인인증 하기</button>
       </div>
     </div>
