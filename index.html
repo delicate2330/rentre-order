@@ -306,7 +306,9 @@
   .auth-hero-title { font-size: 18px; font-weight: 800; color: var(--ink); margin-bottom: 8px; letter-spacing: -.3px; }
   .auth-flow-note { font-size: 14px; color: var(--ink); font-weight: 600; line-height: 1.6; margin-bottom: 22px; }
   .auth-flow-note .afm-sub { display: block; font-size: 12px; color: var(--ink-muted); font-weight: 500; margin-top: 6px; }
-  .kw { display: inline-block; background: var(--primary-soft); color: var(--primary); font-weight: 700; border-radius: 20px; padding: 2px 11px; font-size: 13px; }
+  .kw { color: var(--primary); font-weight: 700; }
+  .chk { color: var(--primary); font-weight: 800; margin-right: 3px; }
+  .stepnum { display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; border-radius: 50%; background: var(--primary); color: #fff; font-size: 11px; font-weight: 700; vertical-align: middle; margin-right: 3px; }
   /* 인증 완료 배지 */
   .auth-done {
     display: flex; align-items: flex-start; gap: 12px;
@@ -638,7 +640,7 @@
           <svg viewBox="0 0 24 24" width="34" height="34" fill="#16192b" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 20.5C4 16.4 7.6 14 12 14s8 2.4 8 6.5V21H4z"/></svg>
         </div>
         <div class="auth-hero-title">휴대폰으로 본인인증</div>
-        <p class="auth-flow-note">이후 <span class="kw">타인명의</span>도 선택 가능해요.<span class="afm-sub">안전한 계약을 위한 절차 · 30초 · 최초 1회</span></p>
+        <p class="auth-flow-note"><span class="stepnum">1</span> 본인인증 이후 <span class="stepnum">2</span> <span class="kw">타인명의</span> 진행이 가능해요.<span class="afm-sub">안전한 계약을 위한 절차 · 30초 · 최초 1회</span></p>
         <button class="auth-cta-btn" onclick="openAuth()">본인인증 하기</button>
       </div>
     </div>
