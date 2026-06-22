@@ -663,7 +663,7 @@
       <div class="auth-done">
         <span class="ad-ico">✅</span>
         <div>
-          <div class="auth-done-title">본인인증 완료 (변슬기)</div>
+          <div class="auth-done-title" id="memberDoneTitle">본인인증 완료 (변슬기)</div>
           <div class="auth-done-sub">1997-08-11 / 010-XXXX-XXXX</div>
         </div>
       </div>
@@ -707,11 +707,11 @@
       <div class="toggle-group" id="nameGroup">
         <label id="tabBonin" onclick="selectName('bonin')">
           <div class="check-icon">✓</div>
-          <div class="opt-txt"><div class="opt-title">본인 명의</div><div class="opt-ex">변슬기</div></div>
+          <div class="opt-txt"><div class="opt-title">본인 명의</div><div class="opt-ex" id="boninEx">변슬기</div></div>
         </label>
         <label id="tabTain" onclick="selectName('tain')">
           <div class="check-icon">✓</div>
-          <div class="opt-txt"><div class="opt-title">타인 명의</div><div class="opt-ex">변슬기 외 명의</div></div>
+          <div class="opt-txt"><div class="opt-title">타인 명의</div><div class="opt-ex" id="tainEx">변슬기 외 명의</div></div>
         </label>
       </div>
 
@@ -1169,6 +1169,11 @@
     closeAuthFlow();
     if (authTarget === 'member') {
       authed = true;
+      // 본인인증 결과로 받은 고객 성함 (데모: 변슬기). 실제로는 인증 응답값을 넣음
+      const memberName = '변슬기';
+      document.getElementById('memberDoneTitle').textContent = '본인인증 완료 (' + memberName + ')';
+      document.getElementById('boninEx').textContent = memberName;
+      document.getElementById('tainEx').textContent = memberName + ' 외 명의';
       document.getElementById('authGate').classList.add('hidden');
       document.getElementById('postAuth').classList.remove('hidden');
       document.getElementById('step1Title').innerHTML = '계약 명의를<br>선택해 주세요';
