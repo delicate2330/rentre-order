@@ -694,10 +694,14 @@
 
       <div id="nameSection">
       <div class="field-label">계약 명의 <span class="required">*</span></div>
-    <div class="tab-group">
-      <button class="tab-btn active" id="tabBonin" onclick="selectName('bonin')">본인 명의</button>
-      <button class="tab-btn" id="tabTain" onclick="selectName('tain')">타인 명의</button>
-    </div>
+      <div class="toggle-group" id="nameGroup">
+        <label id="tabBonin" class="selected" onclick="selectName('bonin')">
+          <div class="check-icon">✓</div> 본인 명의
+        </label>
+        <label id="tabTain" onclick="selectName('tain')">
+          <div class="check-icon">✓</div> 타인 명의
+        </label>
+      </div>
 
     <!-- 본인 명의: 등록된 본인 프로필 노출 -->
     <div id="boninArea">
@@ -996,15 +1000,15 @@
   }
   function applyBonin() {
     nameType = 'bonin';
-    document.getElementById('tabBonin').classList.add('active');
-    document.getElementById('tabTain').classList.remove('active');
+    document.getElementById('tabBonin').classList.add('selected');
+    document.getElementById('tabTain').classList.remove('selected');
     document.getElementById('boninArea').classList.remove('hidden');
     document.getElementById('tainArea').classList.add('hidden');
   }
   function applyTain() {
     nameType = 'tain';
-    document.getElementById('tabTain').classList.add('active');
-    document.getElementById('tabBonin').classList.remove('active');
+    document.getElementById('tabTain').classList.add('selected');
+    document.getElementById('tabBonin').classList.remove('selected');
     document.getElementById('tainArea').classList.remove('hidden');
     document.getElementById('boninArea').classList.add('hidden');
   }
