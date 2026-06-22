@@ -307,6 +307,14 @@
   .auth-flow-note { font-size: 14px; color: var(--ink); font-weight: 600; line-height: 1.6; margin-bottom: 22px; word-break: keep-all; }
   .num1 { color: var(--ink); }
   .num2 { color: var(--primary); }
+  /* 합친 화면: 인증 트리거 + 명의 선택 잠금 */
+  .auth-trigger { display: flex; align-items: center; gap: 14px; border: 1.5px solid var(--line-strong); border-radius: var(--radius-sm); padding: 16px; margin-bottom: 18px; cursor: pointer; background: #fff; transition: all .15s; }
+  .auth-trigger:hover { border-color: var(--primary); background: #fafbff; }
+  .auth-trigger-txt { flex: 1; }
+  .auth-trigger-title { font-size: 15px; font-weight: 800; color: var(--ink); }
+  .auth-trigger-sub { font-size: 12.5px; color: var(--ink-sub); margin-top: 3px; word-break: keep-all; line-height: 1.5; }
+  .auth-trigger-arrow { font-size: 24px; color: var(--ink-muted); }
+  .locked { opacity: .4; pointer-events: none; }
   .auth-flow-note .afm-sub { display: block; font-size: 12px; color: var(--ink-muted); font-weight: 500; margin-top: 6px; }
   .kw { color: var(--primary); font-weight: 700; }
   .chk { color: var(--primary); font-weight: 800; margin-right: 3px; }
@@ -633,31 +641,30 @@
 
   <!-- STEP 1 -->
   <div class="step active" id="step-1">
-    <h2 class="step-title" id="step1Title">먼저 회원<br>본인인증을 해주세요</h2>
-    <p class="step-sub" id="step1Sub"></p>
+    <h2 class="step-title" id="step1Title">계약 명의를<br>선택해 주세요</h2>
+    <p class="step-sub" id="step1Sub">회원 본인인증 후 계약 명의를 선택할 수 있어요.</p>
 
-    <!-- 인증 전: 게이트 -->
-    <div id="authGate">
-      <div class="auth-cta-card">
-        <div class="afm-ico" style="margin:0 auto 16px; background:#eef0f5;">
-          <svg viewBox="0 0 24 24" width="34" height="34" fill="#16192b" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 20.5C4 16.4 7.6 14 12 14s8 2.4 8 6.5V21H4z"/></svg>
-        </div>
-        <div class="auth-hero-title">휴대폰으로 본인인증</div>
-        <p class="auth-flow-note"><b class="num1">①</b> 본인인증 이후 <b class="num2">②</b> <span class="kw">타인명의</span> 진행이 가능해요.<span class="afm-sub">안전한 계약을 위한 절차 · 30초 · 최초 1회</span></p>
-        <button class="auth-cta-btn" onclick="openAuth()">본인인증 하기</button>
+    <!-- 인증 슬롯: 인증 전 = 트리거 / 인증 후 = 완료 카드 -->
+    <div id="authTrigger" class="auth-trigger" onclick="openAuth()">
+      <div class="afm-ico" style="background:#eef0f5; width:48px; height:48px; flex-shrink:0;">
+        <svg viewBox="0 0 24 24" width="26" height="26" fill="#16192b" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 20.5C4 16.4 7.6 14 12 14s8 2.4 8 6.5V21H4z"/></svg>
+      </div>
+      <div class="auth-trigger-txt">
+        <div class="auth-trigger-title">휴대폰 본인인증 하기</div>
+        <div class="auth-trigger-sub"><b class="num1">①</b> 본인인증 이후 <b class="num2">②</b> <span class="kw">타인명의</span> 진행이 가능해요</div>
+      </div>
+      <span class="auth-trigger-arrow">›</span>
+    </div>
+    <div id="authDone" class="auth-done hidden">
+      <span class="ad-ico">✅</span>
+      <div>
+        <div class="auth-done-title">본인인증 완료 (변슬기)</div>
+        <div class="auth-done-sub">1997-08-11 / 010-XXXX-XXXX</div>
       </div>
     </div>
 
-    <!-- 인증 후: 명의 선택 영역 잠금 해제 -->
-    <div id="postAuth" class="hidden">
-      <div class="auth-done">
-        <span class="ad-ico">✅</span>
-        <div>
-          <div class="auth-done-title">본인인증 완료 (변슬기)</div>
-          <div class="auth-done-sub">1997-08-11 / 010-XXXX-XXXX</div>
-        </div>
-      </div>
-
+    <!-- 명의 선택 (인증 전 잠금) -->
+    <div id="nameSelect" class="locked">
       <div class="field-label">계약자 유형 <span class="required">*</span></div>
       <div class="toggle-group" id="cntrTypeGroup">
         <label class="selected" onclick="selectToggle('cntrTypeGroup', this)">
@@ -731,7 +738,7 @@
       </div>
     </div>
     </div><!-- /nameSection -->
-    </div><!-- /postAuth -->
+    </div><!-- /nameSelect -->
   </div>
 
   <!-- STEP 2 -->
@@ -1143,10 +1150,9 @@
     closeAuthFlow();
     if (authTarget === 'member') {
       authed = true;
-      document.getElementById('authGate').classList.add('hidden');
-      document.getElementById('postAuth').classList.remove('hidden');
-      document.getElementById('step1Title').innerHTML = '계약 명의를<br>선택해 주세요';
-      document.getElementById('step1Sub').textContent = '계약자 유형과 명의를 선택한 뒤 다음으로 넘어가 주세요.';
+      document.getElementById('authTrigger').classList.add('hidden');
+      document.getElementById('authDone').classList.remove('hidden');
+      document.getElementById('nameSelect').classList.remove('locked');
       applyBonin();
       updateUI(); // '다음' 버튼 노출
     } else if (authTarget === 'holder') {
