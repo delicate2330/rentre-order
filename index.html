@@ -666,7 +666,7 @@
 
       <div class="field-label">계약자 유형 <span class="required">*</span></div>
       <div class="toggle-group" id="cntrTypeGroup">
-        <label onclick="selectToggle('cntrTypeGroup', this)">
+        <label class="selected" onclick="selectToggle('cntrTypeGroup', this)">
           <div class="check-icon">✓</div> 개인
         </label>
         <label onclick="selectToggle('cntrTypeGroup', this)">
@@ -947,7 +947,7 @@
   let nameType = 'bonin';       // 'bonin' | 'tain'
   let payMethod = 'card';       // 'card' | 'bank'
   let holderAdded = false;      // 계약자(타인) 명의 추가 여부
-  let typeChosen = false;       // 계약자 유형 선택 여부
+  let typeChosen = true;        // 계약자 유형 기본 '개인' 선택
   let nameChosen = false;       // 계약 명의 선택 여부
 
   // 사업자만 STEP4(서류) 포함. 개인은 4 제외. 마지막은 6(요약).
@@ -1165,8 +1165,8 @@
       authed = true;
       document.getElementById('authGate').classList.add('hidden');
       document.getElementById('postAuth').classList.remove('hidden');
-      document.getElementById('step1Title').innerHTML = '계약 정보를<br>선택해 주세요';
-      document.getElementById('step1Sub').textContent = '계약자 유형과 계약 명의를 모두 선택해 주세요.';
+      document.getElementById('step1Title').innerHTML = '계약 명의를<br>선택해 주세요';
+      document.getElementById('step1Sub').textContent = '계약 명의를 선택한 뒤 다음으로 넘어가 주세요.';
       updateUI(); // '다음' 버튼 노출(아직 비활성)
     } else if (authTarget === 'holder') {
       holderAdded = true;
