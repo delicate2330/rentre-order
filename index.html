@@ -521,6 +521,8 @@
     letter-spacing: -.2px;
   }
   .btn-next:hover { background: var(--primary-dark); }
+  .btn-next:disabled { background: var(--line-strong); cursor: not-allowed; }
+  .btn-next:disabled:hover { background: var(--line-strong); }
   .btn-next:active { transform: scale(.99); }
 
   /* ── 모달 ── */
@@ -664,7 +666,7 @@
 
       <div class="field-label">계약자 유형 <span class="required">*</span></div>
       <div class="toggle-group" id="cntrTypeGroup">
-        <label class="selected" onclick="selectToggle('cntrTypeGroup', this)">
+        <label onclick="selectToggle('cntrTypeGroup', this)">
           <div class="check-icon">✓</div> 개인
         </label>
         <label onclick="selectToggle('cntrTypeGroup', this)">
@@ -697,9 +699,9 @@
       </div>
 
       <div id="nameSection">
-      <div class="field-label">계약 명의 <span class="required">*</span><span class="req-chip hidden" id="nameChip">선택해 주세요</span></div>
+      <div class="field-label">계약 명의 <span class="required">*</span></div>
       <div class="toggle-group" id="nameGroup">
-        <label id="tabBonin" class="selected" onclick="selectName('bonin')">
+        <label id="tabBonin" onclick="selectName('bonin')">
           <div class="check-icon">✓</div> 본인 명의
         </label>
         <label id="tabTain" onclick="selectName('tain')">
@@ -708,7 +710,7 @@
       </div>
 
     <!-- 본인 명의: 등록된 본인 프로필 노출 -->
-    <div id="boninArea">
+    <div id="boninArea" class="hidden">
       <div class="info-box">
         <span class="icon">ℹ️</span>
         <span>현금지원금은 본인 명의 계좌로만 수령 가능합니다.</span>
@@ -945,9 +947,14 @@
   let nameType = 'bonin';       // 'bonin' | 'tain'
   let payMethod = 'card';       // 'card' | 'bank'
   let holderAdded = false;      // 계약자(타인) 명의 추가 여부
+  let typeChosen = false;       // 계약자 유형 선택 여부
+  let nameChosen = false;       // 계약 명의 선택 여부
 
   // 사업자만 STEP4(서류) 포함. 개인은 4 제외. 마지막은 6(요약).
   function getSeq() { return isBusiness ? [1, 2, 3, 4, 5] : [1, 2, 3, 5]; }
+
+  // STEP1 다음 진행 가능: 인증 + 유형 선택 + (사업자거나 명의 선택)
+  function step1Ready() { return authed && typeChosen && (isBusiness || nameChosen); }
 
   function updateUI() {
     const seq = getSeq();
@@ -963,6 +970,8 @@
     btnNext.textContent = idx === seq.length - 1 ? '주문 확정하기' : '다음';
     // STEP1은 본인인증 완료 전까지 '다음' 숨김
     btnNext.style.display = (currentStep === 1 && !authed) ? 'none' : 'block';
+    // STEP1: 유형·명의 모두 선택 전까지 '다음' 비활성화
+    btnNext.disabled = (currentStep === 1) ? !step1Ready() : false;
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
@@ -989,28 +998,21 @@
     el.classList.add('selected');
     if (groupId === 'cntrTypeGroup') {
       isBusiness = el.textContent.includes('사업자');
+      typeChosen = true;
       document.getElementById('bizFields').classList.toggle('hidden', !isBusiness);
       // 사업자면 본인/타인 명의 선택 섹션 숨김
       document.getElementById('nameSection').classList.toggle('hidden', isBusiness);
-      // 유형에 따라 제목 전환
       document.getElementById('step1Title').innerHTML = isBusiness ? '사업자 정보를<br>입력해 주세요' : '계약 명의를<br>선택해 주세요';
-      document.getElementById('step1Sub').textContent = isBusiness ? '사업자 정보를 입력한 뒤 다음으로 넘어가 주세요.' : '계약 명의를 선택한 뒤 다음으로 넘어가 주세요.';
-      // 개인 선택 시 '계약 명의 선택' 단계로 안내
-      if (!isBusiness) {
-        const chip = document.getElementById('nameChip');
-        const group = document.getElementById('nameGroup');
-        chip.classList.remove('hidden');
-        group.classList.remove('pulse'); void group.offsetWidth; group.classList.add('pulse');
-        document.getElementById('nameSection').scrollIntoView({ behavior: 'smooth', block: 'center' });
-      }
+      document.getElementById('step1Sub').textContent = isBusiness ? '사업자 정보를 입력해 주세요.' : '계약 명의를 선택해 주세요.';
+      updateUI(); // '다음' 활성/비활성 갱신
     }
   }
   // 명의 선택 분기: 본인 → 회원 프로필 / 타인 → 회원 + 계약자(추가형)
   function selectName(type) {
-    const c = document.getElementById('nameChip');
-    if (c) c.classList.add('hidden'); // 명의 선택하면 안내 칩 숨김
+    nameChosen = true;
     if (type === 'bonin') applyBonin();
     else applyTain();
+    updateUI(); // '다음' 활성/비활성 갱신
   }
   function applyBonin() {
     nameType = 'bonin';
@@ -1163,10 +1165,9 @@
       authed = true;
       document.getElementById('authGate').classList.add('hidden');
       document.getElementById('postAuth').classList.remove('hidden');
-      document.getElementById('step1Title').innerHTML = '계약 명의를<br>선택해 주세요';
-      document.getElementById('step1Sub').textContent = '계약자 유형과 명의를 선택한 뒤 다음으로 넘어가 주세요.';
-      applyBonin();
-      updateUI(); // '다음' 버튼 노출
+      document.getElementById('step1Title').innerHTML = '계약 정보를<br>선택해 주세요';
+      document.getElementById('step1Sub').textContent = '계약자 유형과 계약 명의를 모두 선택해 주세요.';
+      updateUI(); // '다음' 버튼 노출(아직 비활성)
     } else if (authTarget === 'holder') {
       holderAdded = true;
       document.getElementById('holderAddArea').classList.add('hidden');
