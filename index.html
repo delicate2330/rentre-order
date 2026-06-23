@@ -373,6 +373,9 @@
     flex-shrink: 0;
   }
   .holder-del:hover { background: #fdeced; }
+  .holder-list { display: flex; flex-direction: column; gap: 8px; max-height: 224px; overflow-y: auto; margin-bottom: 12px; }
+  .holder-list:empty { margin-bottom: 0; }
+  .holder-item { display: flex; align-items: center; gap: 12px; border: 1.5px solid #b5651d; background: #fff7ef; border-radius: var(--radius-sm); padding: 14px; }
 
   /* ── 입력 ── */
   .input-group { margin-bottom: 22px; }
@@ -725,21 +728,10 @@
 
     <!-- 타인 명의: 회원 + 계약자(타인) 두 명의로 수령 -->
     <div id="tainArea" class="holder-area hidden">
-      <!-- 계약자(타인) 명의: 인증 전 -->
-      <div id="holderAddArea">
-        <button class="btn-add-holder" onclick="openHolderAuth()">+ 계약자(타인)명의 인증하고 추가</button>
-      </div>
-      <!-- 계약자(타인) 명의: 인증 후 (언제든 삭제 가능) -->
-      <div id="holderCard" class="hidden">
-        <div class="profile-card" style="border-color:#b5651d;background:#fff7ef;">
-          <div class="profile-avatar" style="background:#b5651d;">홍</div>
-          <div>
-            <div class="profile-name">홍길동 <span class="role-tag">계약자</span></div>
-            <div class="profile-meta">1990-01-01 · 010-YYYY-YYYY</div>
-          </div>
-          <button class="holder-del" onclick="removeHolder()">삭제</button>
-        </div>
-      </div>
+      <!-- 추가된 계약자(타인) 목록 (여러 명 가능, 스크롤) -->
+      <div id="holderList" class="holder-list"></div>
+      <!-- 계약자 추가 버튼 (계속 추가 가능) -->
+      <button class="btn-add-holder" onclick="openHolderAuth()">+ 계약자(타인)명의 인증하고 추가</button>
 
       <div class="info-box">
         <span class="icon">ℹ️</span>
@@ -952,15 +944,21 @@
   let isBusiness = false;       // 사업자 여부 (개인이면 STEP4 건너뜀)
   let nameType = 'bonin';       // 'bonin' | 'tain'
   let payMethod = 'card';       // 'card' | 'bank'
-  let holderAdded = false;      // 계약자(타인) 명의 추가 여부
   let typeChosen = true;        // 계약자 유형 기본 '개인' 선택
   let nameChosen = false;       // 계약 명의 선택 여부
 
   // 사업자만 STEP4(서류) 포함. 개인은 4 제외. 마지막은 6(요약).
   function getSeq() { return isBusiness ? [1, 2, 3, 4, 5] : [1, 2, 3, 5]; }
 
-  // STEP1 다음 진행 가능: 인증 + 유형 선택 + (사업자거나 명의 선택)
-  function step1Ready() { return authed && typeChosen && (isBusiness || nameChosen); }
+  function holderCount() { const l = document.getElementById('holderList'); return l ? l.children.length : 0; }
+  // STEP1 다음 진행 가능: 인증 + 유형 선택 + (사업자 / 본인명의 / 타인명의는 계약자 1명 이상 추가)
+  function step1Ready() {
+    if (!authed || !typeChosen) return false;
+    if (isBusiness) return true;
+    if (!nameChosen) return false;
+    if (nameType === 'tain') return holderCount() > 0;
+    return true;
+  }
 
   function updateUI() {
     const seq = getSeq();
@@ -1034,11 +1032,25 @@
     document.getElementById('tainArea').classList.remove('hidden');
     document.getElementById('boninArea').classList.add('hidden');
   }
-  // 계약자(타인) 명의: 인증 플로우로 추가, 언제든 삭제 가능
-  function removeHolder() {
-    holderAdded = false;
-    document.getElementById('holderCard').classList.add('hidden');
-    document.getElementById('holderAddArea').classList.remove('hidden');
+  // 계약자(타인) 명의: 여러 명 추가 가능, 각자 삭제 가능
+  const HOLDER_NAMES = ['홍길동', '김영희', '이민수', '박지원', '최수정', '정해성', '오지훈', '한가람'];
+  function addHolder() {
+    const list = document.getElementById('holderList');
+    const i = list.children.length;
+    const nm = HOLDER_NAMES[i] || ('계약자' + (i + 1));
+    const div = document.createElement('div');
+    div.className = 'holder-item';
+    div.innerHTML =
+      '<div class="profile-avatar" style="background:#b5651d;flex-shrink:0;">' + nm[0] + '</div>' +
+      '<div style="flex:1;min-width:0;"><div class="profile-name">' + nm + ' <span class="role-tag">계약자</span></div>' +
+      '<div class="profile-meta">1990-01-01 · 010-****-****</div></div>' +
+      '<button class="holder-del" onclick="removeHolder(this)">삭제</button>';
+    list.appendChild(div);
+    updateUI();
+  }
+  function removeHolder(btn) {
+    btn.closest('.holder-item').remove();
+    updateUI();
   }
   // 결제 방식 분기: 카드결제 ↔ 계좌이체 필드 전환
   function selectPayment(el) {
@@ -1069,7 +1081,7 @@
       html += row('사업자번호', v('bizRegNum'));
     } else {
       html += row('명의', nameType === 'tain' ? '타인 명의' : '본인 명의');
-      if (nameType === 'tain') html += row('계약자', holderAdded ? '홍길동 (인증 완료)' : '미등록');
+      if (nameType === 'tain') html += row('계약자', holderCount() > 0 ? holderCount() + '명 등록' : '미등록');
     }
     html += '<div class="summary-group-title">설치 주소</div>';
     html += row('주소', addr);
@@ -1180,9 +1192,7 @@
       document.getElementById('step1Sub').textContent = '계약 명의를 선택한 뒤 다음으로 넘어가 주세요.';
       updateUI(); // '다음' 버튼 노출(아직 비활성)
     } else if (authTarget === 'holder') {
-      holderAdded = true;
-      document.getElementById('holderAddArea').classList.add('hidden');
-      document.getElementById('holderCard').classList.remove('hidden');
+      addHolder(); // 계약자 1명 추가(여러 명 가능)
     }
   }
 
