@@ -531,8 +531,10 @@
     letter-spacing: -.2px;
   }
   .btn-next:hover { background: var(--primary-dark); }
-  .btn-next:disabled { background: var(--line-strong); cursor: not-allowed; }
-  .btn-next:disabled:hover { background: var(--line-strong); }
+  .btn-next.locked { background: var(--line-strong); }
+  .btn-next.locked:hover { background: var(--line-strong); }
+  .form-hint { position: fixed; bottom: 88px; left: 50%; transform: translateX(-50%); background: #16192b; color: #fff; font-size: 13px; font-weight: 600; padding: 10px 18px; border-radius: 22px; z-index: 30; box-shadow: 0 4px 16px rgba(0,0,0,.22); }
+  .form-hint.hidden { display: none; }
   .btn-next:active { transform: scale(.99); }
 
   /* ── 모달 ── */
@@ -876,6 +878,7 @@
 
   <!-- 하단 버튼 -->
   <div class="btn-area">
+    <div id="formHint" class="form-hint hidden"></div>
     <button class="btn-prev" id="btnPrev" onclick="prevStep()">이전</button>
     <button class="btn-next" id="btnNext" onclick="nextStep()" style="display:none">다음</button>
   </div>
@@ -977,20 +980,32 @@
     btnNext.textContent = idx === seq.length - 1 ? '주문 확정하기' : '다음';
     // STEP1은 본인인증 완료 전까지 '다음' 숨김
     btnNext.style.display = (currentStep === 1 && !authed) ? 'none' : 'block';
-    // STEP1: 유형·명의 모두 선택 전까지 '다음' 비활성화
-    btnNext.disabled = (currentStep === 1) ? !step1Ready() : false;
+    // STEP1: 유형·명의 미선택 시 '다음' 잠금 표시(클릭 시 안내)
+    btnNext.classList.toggle('locked', currentStep === 1 && !step1Ready());
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   function nextStep() {
-    if (currentStep === 1 && !authed) {
-      openAuth(); // 인증 안 했으면 진행 불가 — 게이트 강제
-      return;
+    if (currentStep === 1) {
+      if (!authed) { openAuth(); return; }
+      if (!step1Ready()) {
+        if (!isBusiness && nameType === 'tain') showHint('타인 명의를 등록해 주세요');
+        else showHint('계약 명의를 선택해 주세요');
+        return;
+      }
     }
     const seq = getSeq();
     const idx = seq.indexOf(currentStep);
     if (idx < seq.length - 1) { currentStep = seq[idx + 1]; updateUI(); }
     else alert('주문이 확정되었습니다!');
+  }
+  let hintTimer = null;
+  function showHint(msg) {
+    const h = document.getElementById('formHint');
+    h.textContent = msg;
+    h.classList.remove('hidden');
+    clearTimeout(hintTimer);
+    hintTimer = setTimeout(() => h.classList.add('hidden'), 2500);
   }
   function prevStep() {
     const seq = getSeq();
