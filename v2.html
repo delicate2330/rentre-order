@@ -664,8 +664,8 @@
   <!-- STEP 1 -->
   <!-- STEP 1: 회원 본인 인증 (풀페이지 랜딩) -->
   <div class="step active" id="step-1">
-    <h2 class="step-title">주문 전에<br>본인 인증부터 할게요</h2>
-    <p class="step-sub">고객님 정보를 안전하게 지키기 위한 절차예요. 30초면 끝나요.</p>
+    <h2 class="step-title" id="step1MainTitle">주문 전에<br>본인 인증부터 할게요</h2>
+    <p class="step-sub" id="step1MainSub">고객님 정보를 안전하게 지키기 위한 절차예요. 30초면 끝나요.</p>
 
     <div id="authGate">
       <div class="auth-cta-card" id="authCtaCard">
@@ -685,7 +685,6 @@
             <div class="auth-done-sub">1997-08-11 / 010-XXXX-XXXX</div>
           </div>
         </div>
-        <p class="done-q">이제 어떤 명의로 계약할까요?</p>
         <button class="auth-cta-btn" onclick="chooseName('bonin')"><span id="boninBtnName">변슬기</span> 명의로 하고 싶어요</button>
         <button class="auth-cta-sub" onclick="chooseName('tain')">다른 명의로 하고 싶어요</button>
       </div>
@@ -1234,6 +1233,8 @@
       MEMBER_NAME = memberName;
       document.getElementById('memberDoneTitle').textContent = '휴대폰 인증을 마쳤어요 (' + memberName + ')';
       document.getElementById('boninBtnName').textContent = memberName;
+      document.getElementById('step1MainTitle').innerHTML = '계약 명의를<br>선택해 주세요';
+      document.getElementById('step1MainSub').textContent = '인증을 마쳤어요. 이제 어떤 명의로 계약할지 골라 주세요.';
       document.getElementById('authCtaCard').classList.add('hidden');
       document.getElementById('authDoneCard').classList.remove('hidden');
       updateUI(); // STEP1 '다음' 버튼 노출 → STEP2(계약 명의)로 진행
