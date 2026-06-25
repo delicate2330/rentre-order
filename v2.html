@@ -298,6 +298,11 @@
   .auth-cta-sub { width: 100%; margin-top: 10px; padding: 14px; background: #fff; color: var(--primary); border: 1.5px solid var(--primary); border-radius: var(--radius-sm); font-size: 15px; font-weight: 700; cursor: pointer; }
   .auth-cta-sub:hover { background: var(--primary-soft); }
   .auth-foot-note { margin: 14px 2px 0; font-size: 12px; line-height: 1.6; color: var(--ink-muted); text-align: left; }
+  .name-confirm { display: flex; align-items: center; gap: 10px; padding: 14px 16px; border: 1.5px solid var(--primary); background: var(--primary-soft); border-radius: var(--radius-sm); margin-bottom: 14px; }
+  .name-confirm .nc-info { flex: 1; min-width: 0; display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+  .name-confirm .nc-label { font-size: 12px; font-weight: 800; color: var(--primary); padding: 2px 8px; background: #fff; border-radius: 6px; }
+  .name-confirm .nc-name { font-size: 15px; font-weight: 800; color: var(--ink); }
+  .name-confirm .nc-change { flex-shrink: 0; background: none; border: none; font-size: 13px; font-weight: 700; color: var(--primary); text-decoration: underline; cursor: pointer; }
   .name-help { margin: -4px 0 12px; font-size: 12.5px; line-height: 1.6; color: var(--ink-sub); }
   .name-help b { color: var(--ink); font-weight: 700; }
   .name-default { display: inline-block; margin-left: 4px; padding: 1px 6px; font-size: 10.5px; font-weight: 700; color: var(--primary); background: var(--primary-soft); border-radius: 5px; vertical-align: middle; }
@@ -689,8 +694,8 @@
 
   <!-- STEP 2: 계약자 정보 / 계약 명의 (인증과 분리) -->
   <div class="step" id="step-2">
-    <h2 class="step-title" id="step1Title">계약 명의를<br>선택해 주세요</h2>
-    <p class="step-sub" id="step1Sub">계약자 유형과 명의를 선택해 주세요.</p>
+    <h2 class="step-title" id="step1Title">계약 정보를<br>확인해 주세요</h2>
+    <p class="step-sub" id="step1Sub">계약자 유형을 고르고, 선택하신 명의를 확인해 주세요.</p>
 
       <div class="field-label">계약자 유형 <span class="required">*</span></div>
       <div class="toggle-group" id="cntrTypeGroup">
@@ -727,17 +732,13 @@
       </div>
 
       <div id="nameSection">
-      <div class="field-label">계약 명의 <span class="required">*</span></div>
-      <p class="name-help">계약서·현금지원금에 들어갈 이름이에요. <b>고객님 본인</b> 이름으로 하시면 ‘내 명의’, <b>부모님 등 다른 분</b> 이름으로 하시면 ‘본인 외 명의’를 골라 주세요.</p>
-      <div class="toggle-group" id="nameGroup">
-        <label id="tabBonin" onclick="selectName('bonin')">
-          <div class="check-icon">✓</div>
-          <div class="opt-txt"><div class="opt-title">내 명의 <span class="name-default">기본값</span></div><div class="opt-ex" id="boninEx">변슬기</div></div>
-        </label>
-        <label id="tabTain" onclick="selectName('tain')">
-          <div class="check-icon">✓</div>
-          <div class="opt-txt"><div class="opt-title">본인 외 명의</div><div class="opt-ex" id="tainEx">변슬기 외 다른 분</div></div>
-        </label>
+      <div class="field-label">계약 명의</div>
+      <div class="name-confirm">
+        <div class="nc-info">
+          <span class="nc-label" id="ncLabel">내 명의</span>
+          <span class="nc-name" id="ncName">변슬기</span>
+        </div>
+        <button class="nc-change" onclick="prevStep()">바꾸기</button>
       </div>
 
     <!-- 내 명의: 등록된 본인 프로필 노출 -->
@@ -967,6 +968,7 @@
   let nameType = 'bonin';       // 'bonin' | 'tain'
   let payMethod = 'card';       // 'card' | 'bank'
   let typeChosen = true;        // 계약자 유형 기본 '개인' 선택
+  let MEMBER_NAME = '변슬기';    // 본인인증으로 확인된 회원 성함
   let nameChosen = false;       // 계약 명의 선택 여부
 
   // DOM순: 1=인증 2=명의 3=주소 4=결제 5=사업자서류 6=특약. 사업자만 5 포함.
@@ -1041,8 +1043,8 @@
       document.getElementById('bizFields').classList.toggle('hidden', !isBusiness);
       // 사업자면 본인/타인 명의 선택 섹션 숨김
       document.getElementById('nameSection').classList.toggle('hidden', isBusiness);
-      document.getElementById('step1Title').innerHTML = isBusiness ? '사업자 정보를<br>입력해 주세요' : '계약 명의를<br>선택해 주세요';
-      document.getElementById('step1Sub').textContent = isBusiness ? '사업자 정보를 입력해 주세요.' : '계약 명의를 선택해 주세요.';
+      document.getElementById('step1Title').innerHTML = isBusiness ? '사업자 정보를<br>입력해 주세요' : '계약 정보를<br>확인해 주세요';
+      document.getElementById('step1Sub').textContent = isBusiness ? '사업자 정보를 입력해 주세요.' : '계약자 유형을 고르고, 선택하신 명의를 확인해 주세요.';
       updateUI(); // '다음' 활성/비활성 갱신
     }
   }
@@ -1057,15 +1059,15 @@
   }
   function applyBonin() {
     nameType = 'bonin';
-    document.getElementById('tabBonin').classList.add('selected');
-    document.getElementById('tabTain').classList.remove('selected');
+    document.getElementById('ncLabel').textContent = '내 명의';
+    document.getElementById('ncName').textContent = MEMBER_NAME;
     document.getElementById('boninArea').classList.remove('hidden');
     document.getElementById('tainArea').classList.add('hidden');
   }
   function applyTain() {
     nameType = 'tain';
-    document.getElementById('tabTain').classList.add('selected');
-    document.getElementById('tabBonin').classList.remove('selected');
+    document.getElementById('ncLabel').textContent = '본인 외 명의';
+    document.getElementById('ncName').textContent = MEMBER_NAME + ' 외 다른 분';
     document.getElementById('tainArea').classList.remove('hidden');
     document.getElementById('boninArea').classList.add('hidden');
   }
@@ -1229,9 +1231,8 @@
       authed = true;
       // 본인인증 결과로 받은 고객 성함 (데모: 변슬기). 실제로는 인증 응답값을 넣음
       const memberName = '변슬기';
+      MEMBER_NAME = memberName;
       document.getElementById('memberDoneTitle').textContent = '휴대폰 인증을 마쳤어요 (' + memberName + ')';
-      document.getElementById('boninEx').textContent = memberName;
-      document.getElementById('tainEx').textContent = memberName + ' 외 다른 분';
       document.getElementById('boninBtnName').textContent = memberName;
       document.getElementById('authCtaCard').classList.add('hidden');
       document.getElementById('authDoneCard').classList.remove('hidden');
