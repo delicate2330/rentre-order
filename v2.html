@@ -297,7 +297,7 @@
   .auth-cta-btn:hover { background: var(--primary-dark); }
   .auth-cta-sub { width: 100%; margin-top: 10px; padding: 14px; background: #fff; color: var(--primary); border: 1.5px solid var(--primary); border-radius: var(--radius-sm); font-size: 15px; font-weight: 700; cursor: pointer; }
   .auth-cta-sub:hover { background: var(--primary-soft); }
-  .auth-foot-note { margin: 14px 2px 0; font-size: 12px; line-height: 1.6; color: var(--ink-muted); text-align: left; }
+  .auth-foot-note { margin: 14px 2px 0; font-size: 12px; line-height: 1.6; color: var(--ink-muted); text-align: center; }
   .name-confirm { display: flex; align-items: center; gap: 10px; padding: 14px 16px; border: 1.5px solid var(--primary); background: var(--primary-soft); border-radius: var(--radius-sm); margin-bottom: 14px; }
   .name-confirm .nc-info { flex: 1; min-width: 0; display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
   .name-confirm .nc-label { font-size: 12px; font-weight: 800; color: var(--primary); padding: 2px 8px; background: #fff; border-radius: 6px; }
@@ -315,7 +315,7 @@
   .afm-branch { display: flex; flex-direction: column; gap: 10px; }
   .afm-pill { border: 1.5px solid var(--line-strong); background: #fff; border-radius: 20px; padding: 9px 16px; font-size: 14px; font-weight: 700; color: var(--ink-sub); white-space: nowrap; text-align: center; }
   .auth-hero-title { font-size: 18px; font-weight: 800; color: var(--ink); margin-bottom: 8px; letter-spacing: -.3px; }
-  .auth-flow-note { font-size: 14px; color: var(--ink); font-weight: 600; line-height: 1.6; margin-bottom: 22px; word-break: keep-all; }
+  .auth-flow-note { font-size: 14px; color: var(--ink); font-weight: 600; line-height: 1.6; margin-bottom: 22px; word-break: keep-all; text-align: center; }
   .num1 { color: var(--ink); }
   .num2 { color: var(--primary); }
   /* 명의 카드 예시 */
@@ -664,7 +664,7 @@
   <!-- STEP 1 -->
   <!-- STEP 1: 회원 본인 인증 (풀페이지 랜딩) -->
   <div class="step active" id="step-1">
-    <h2 class="step-title" id="step1MainTitle">주문 전에<br>본인 인증부터 할게요</h2>
+    <h2 class="step-title" id="step1MainTitle">안전한 주문을 위해<br>본인 확인부터 할게요</h2>
     <p class="step-sub" id="step1MainSub">고객님 정보를 안전하게 지키기 위한 절차예요. 30초면 끝나요.</p>
 
     <div id="authGate">
@@ -675,7 +675,7 @@
         <div class="auth-hero-title">휴대폰으로 본인 인증</div>
         <p class="auth-flow-note">통신사 인증으로 빠르게 끝나요.<span class="afm-sub">30초 · 최초 1회</span></p>
         <button class="auth-cta-btn" onclick="openAuth()">휴대폰으로 본인 인증하기</button>
-        <p class="auth-foot-note">주문을 시작하려면 먼저 고객님 본인 인증을 해야 해요. 부모님 등 다른 분 이름으로 계약하고 싶으셔도, 인증을 마친 뒤 다음 단계에서 명의를 정할 수 있어요.</p>
+        <p class="auth-foot-note">부모님 등 다른 분 이름으로 계약하실 때도, 주문하시는 고객님 본인 확인을 먼저 거쳐요. 계약 명의는 인증을 마친 뒤 고르실 수 있어요.</p>
       </div>
       <div class="hidden" id="authDoneCard">
         <div class="auth-done">
@@ -696,10 +696,6 @@
           <p class="done-q">어떤 명의로 계약할까요?</p>
           <button class="auth-cta-btn" onclick="chooseName('bonin')"><span id="boninBtnName">변슬기</span> 명의로 하고 싶어요</button>
           <button class="auth-cta-sub" onclick="chooseName('tain')">다른 명의로 하고 싶어요</button>
-        </div>
-        <div id="doneBizBtn" class="hidden">
-          <p class="done-q">사업자 정보를 입력하고 진행할게요.</p>
-          <button class="auth-cta-btn" onclick="goBiz()">사업자 정보 입력하러 가기</button>
         </div>
       </div>
     </div>
@@ -1046,18 +1042,17 @@
     el.classList.add('selected');
     isBusiness = (kind === 'biz');
     typeChosen = true;
-    // STEP1 카드: 개인=명의 버튼 / 사업자=정보 입력 버튼
+    // STEP1 카드: 개인이면 명의 버튼 노출(사업자는 바로 다음 단계로)
     document.getElementById('doneIndivBtns').classList.toggle('hidden', isBusiness);
-    document.getElementById('doneBizBtn').classList.toggle('hidden', !isBusiness);
     // STEP2(확인 화면)에 유형 반영
     document.getElementById('typeConfirmName').textContent = isBusiness ? '사업자' : '개인';
     document.getElementById('bizFields').classList.toggle('hidden', !isBusiness);
     document.getElementById('nameSection').classList.toggle('hidden', isBusiness);
     document.getElementById('step1Title').innerHTML = isBusiness ? '사업자 정보를<br>입력해 주세요' : '계약 정보를<br>확인해 주세요';
     document.getElementById('step1Sub').textContent = isBusiness ? '세금계산서 발행을 위한 사업자 정보를 입력해 주세요.' : '선택하신 명의를 확인해 주세요.';
+    // 사업자는 추가 선택이 없으니 바로 정보 입력 단계로 이동
+    if (isBusiness) nextStep();
   }
-  // 사업자: 명의 선택 없이 STEP2(사업자 정보)로 이동
-  function goBiz() { nextStep(); }
   // STEP1 인증 완료 카드(개인)의 두 버튼: 명의 선택 후 STEP2(확인)로 이동
   function chooseName(type) { selectName(type); nextStep(); }
   // 명의 선택 분기: 본인 → 회원 프로필 / 타인 → 회원 + 계약자(추가형)
