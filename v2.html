@@ -685,8 +685,22 @@
             <div class="auth-done-sub">1997-08-11 / 010-XXXX-XXXX</div>
           </div>
         </div>
-        <button class="auth-cta-btn" onclick="chooseName('bonin')"><span id="boninBtnName">변슬기</span> 명의로 하고 싶어요</button>
-        <button class="auth-cta-sub" onclick="chooseName('tain')">다른 명의로 하고 싶어요</button>
+
+        <div class="field-label">계약자 유형 <span class="required">*</span></div>
+        <div class="toggle-group" id="doneTypeGroup">
+          <label class="selected" onclick="chooseType('indiv', this)"><div class="check-icon">✓</div> 개인</label>
+          <label onclick="chooseType('biz', this)"><div class="check-icon">✓</div> 사업자</label>
+        </div>
+
+        <div id="doneIndivBtns">
+          <p class="done-q">어떤 명의로 계약할까요?</p>
+          <button class="auth-cta-btn" onclick="chooseName('bonin')"><span id="boninBtnName">변슬기</span> 명의로 하고 싶어요</button>
+          <button class="auth-cta-sub" onclick="chooseName('tain')">다른 명의로 하고 싶어요</button>
+        </div>
+        <div id="doneBizBtn" class="hidden">
+          <p class="done-q">사업자 정보를 입력하고 진행할게요.</p>
+          <button class="auth-cta-btn" onclick="goBiz()">사업자 정보 입력하러 가기</button>
+        </div>
       </div>
     </div>
   </div>
@@ -696,14 +710,10 @@
     <h2 class="step-title" id="step1Title">계약 정보를<br>확인해 주세요</h2>
     <p class="step-sub" id="step1Sub">계약자 유형을 고르고, 선택하신 명의를 확인해 주세요.</p>
 
-      <div class="field-label">계약자 유형 <span class="required">*</span></div>
-      <div class="toggle-group" id="cntrTypeGroup">
-        <label class="selected" onclick="selectToggle('cntrTypeGroup', this)">
-          <div class="check-icon">✓</div> 개인
-        </label>
-        <label onclick="selectToggle('cntrTypeGroup', this)">
-          <div class="check-icon">✓</div> 사업자
-        </label>
+      <div class="field-label">계약자 유형</div>
+      <div class="name-confirm">
+        <div class="nc-info"><span class="nc-name" id="typeConfirmName">개인</span></div>
+        <button class="nc-change" onclick="prevStep()">바꾸기</button>
       </div>
 
       <!-- 사업자 전용 정보 (사업자 선택 시 노출) -->
@@ -1032,22 +1042,25 @@
   }
   function goBack() { if (currentStep > 1) prevStep(); else alert('이전 페이지로 이동합니다.'); }
 
-  function selectToggle(groupId, el) {
-    const g = document.getElementById(groupId);
-    g.querySelectorAll('label').forEach(l => l.classList.remove('selected'));
+  // STEP1 인증 완료 카드: 계약자 유형(개인/사업자) 먼저 선택 → 분기 버튼 전환
+  function chooseType(kind, el) {
+    document.querySelectorAll('#doneTypeGroup label').forEach(l => l.classList.remove('selected'));
     el.classList.add('selected');
-    if (groupId === 'cntrTypeGroup') {
-      isBusiness = el.textContent.includes('사업자');
-      typeChosen = true;
-      document.getElementById('bizFields').classList.toggle('hidden', !isBusiness);
-      // 사업자면 본인/타인 명의 선택 섹션 숨김
-      document.getElementById('nameSection').classList.toggle('hidden', isBusiness);
-      document.getElementById('step1Title').innerHTML = isBusiness ? '사업자 정보를<br>입력해 주세요' : '계약 정보를<br>확인해 주세요';
-      document.getElementById('step1Sub').textContent = isBusiness ? '사업자 정보를 입력해 주세요.' : '계약자 유형을 고르고, 선택하신 명의를 확인해 주세요.';
-      updateUI(); // '다음' 활성/비활성 갱신
-    }
+    isBusiness = (kind === 'biz');
+    typeChosen = true;
+    // STEP1 카드: 개인=명의 버튼 / 사업자=정보 입력 버튼
+    document.getElementById('doneIndivBtns').classList.toggle('hidden', isBusiness);
+    document.getElementById('doneBizBtn').classList.toggle('hidden', !isBusiness);
+    // STEP2(확인 화면)에 유형 반영
+    document.getElementById('typeConfirmName').textContent = isBusiness ? '사업자' : '개인';
+    document.getElementById('bizFields').classList.toggle('hidden', !isBusiness);
+    document.getElementById('nameSection').classList.toggle('hidden', isBusiness);
+    document.getElementById('step1Title').innerHTML = isBusiness ? '사업자 정보를<br>입력해 주세요' : '계약 정보를<br>확인해 주세요';
+    document.getElementById('step1Sub').textContent = isBusiness ? '세금계산서 발행을 위한 사업자 정보를 입력해 주세요.' : '선택하신 명의를 확인해 주세요.';
   }
-  // STEP1 인증 완료 카드의 두 버튼: 명의 선택 후 STEP2(계약 명의)로 이동
+  // 사업자: 명의 선택 없이 STEP2(사업자 정보)로 이동
+  function goBiz() { nextStep(); }
+  // STEP1 인증 완료 카드(개인)의 두 버튼: 명의 선택 후 STEP2(확인)로 이동
   function chooseName(type) { selectName(type); nextStep(); }
   // 명의 선택 분기: 본인 → 회원 프로필 / 타인 → 회원 + 계약자(추가형)
   function selectName(type) {
@@ -1233,8 +1246,8 @@
       MEMBER_NAME = memberName;
       document.getElementById('memberDoneTitle').textContent = '휴대폰 인증을 마쳤어요 (' + memberName + ')';
       document.getElementById('boninBtnName').textContent = memberName;
-      document.getElementById('step1MainTitle').innerHTML = '계약 명의를<br>선택해 주세요';
-      document.getElementById('step1MainSub').textContent = '인증을 마쳤어요. 이제 어떤 명의로 계약할지 골라 주세요.';
+      document.getElementById('step1MainTitle').innerHTML = '어떻게<br>계약하시나요?';
+      document.getElementById('step1MainSub').textContent = '인증을 마쳤어요. 계약자 유형을 고른 뒤 진행해 주세요.';
       document.getElementById('authCtaCard').classList.add('hidden');
       document.getElementById('authDoneCard').classList.remove('hidden');
       updateUI(); // STEP1 '다음' 버튼 노출 → STEP2(계약 명의)로 진행
