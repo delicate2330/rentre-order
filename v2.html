@@ -668,9 +668,8 @@
         </div>
         <div class="auth-hero-title">휴대폰으로 본인 인증</div>
         <p class="auth-flow-note">통신사 인증으로 빠르게 끝나요.<span class="afm-sub">30초 · 최초 1회</span></p>
-        <button class="auth-cta-btn" onclick="startAuth('bonin')">제 이름으로 시작할게요</button>
-        <button class="auth-cta-sub" onclick="startAuth('tain')">부모님 등 다른 분 이름으로 하고 싶어요</button>
-        <p class="auth-foot-note">어느 쪽을 고르셔도 먼저 고객님 휴대폰 인증을 한 번 거쳐요. 계약 명의는 다음 단계에서 정할 수 있어요.</p>
+        <button class="auth-cta-btn" onclick="openAuth()">휴대폰으로 본인 인증하기</button>
+        <p class="auth-foot-note">주문을 시작하려면 먼저 고객님 본인 인증을 해야 해요. 부모님 등 다른 분 이름으로 계약하고 싶으셔도, 인증을 마친 뒤 다음 단계에서 명의를 정할 수 있어요.</p>
       </div>
       <div class="auth-done hidden" id="authDoneCard">
         <span class="ad-ico">✅</span>
@@ -962,9 +961,6 @@
   let nameType = 'bonin';       // 'bonin' | 'tain'
   let payMethod = 'card';       // 'card' | 'bank'
   let typeChosen = true;        // 계약자 유형 기본 '개인' 선택
-  let nameIntent = 'bonin';     // STEP1에서 고른 의향: 'bonin'(내 이름) | 'tain'(다른 분 이름)
-  // STEP1 두 버튼: 어느 쪽이든 회원 본인인증 먼저, 의향만 기억해 STEP2 명의를 미리 선택
-  function startAuth(intent) { nameIntent = intent; openAuth(); }
   let nameChosen = false;       // 계약 명의 선택 여부
 
   // DOM순: 1=인증 2=명의 3=주소 4=결제 5=사업자서류 6=특약. 사업자만 5 포함.
@@ -1230,7 +1226,6 @@
       document.getElementById('tainEx').textContent = memberName + ' 외 다른 분';
       document.getElementById('authCtaCard').classList.add('hidden');
       document.getElementById('authDoneCard').classList.remove('hidden');
-      selectName(nameIntent); // STEP1에서 고른 의향대로 STEP2 계약 명의 미리 선택
       updateUI(); // STEP1 '다음' 버튼 노출 → STEP2(계약 명의)로 진행
     } else if (authTarget === 'holder') {
       addHolder(); // 계약자 1명 추가(여러 명 가능)
