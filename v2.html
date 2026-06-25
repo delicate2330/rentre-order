@@ -295,7 +295,9 @@
     transition: background .15s;
   }
   .auth-cta-btn:hover { background: var(--primary-dark); }
-  .auth-warn { margin: 0 0 16px; padding: 11px 14px; background: #fff4ec; border: 1px solid #ffd2ad; color: #b5651d; border-radius: var(--radius-sm); font-size: 12.5px; line-height: 1.55; font-weight: 600; text-align: left; }
+  .auth-cta-sub { width: 100%; margin-top: 10px; padding: 14px; background: #fff; color: var(--primary); border: 1.5px solid var(--primary); border-radius: var(--radius-sm); font-size: 15px; font-weight: 700; cursor: pointer; }
+  .auth-cta-sub:hover { background: var(--primary-soft); }
+  .auth-foot-note { margin: 14px 2px 0; font-size: 12px; line-height: 1.6; color: var(--ink-muted); text-align: left; }
   .name-help { margin: -4px 0 12px; font-size: 12.5px; line-height: 1.6; color: var(--ink-sub); }
   .name-help b { color: var(--ink); font-weight: 700; }
   .name-default { display: inline-block; margin-left: 4px; padding: 1px 6px; font-size: 10.5px; font-weight: 700; color: var(--primary); background: var(--primary-soft); border-radius: 5px; vertical-align: middle; }
@@ -656,8 +658,8 @@
   <!-- STEP 1 -->
   <!-- STEP 1: 회원 본인 인증 (풀페이지 랜딩) -->
   <div class="step active" id="step-1">
-    <h2 class="step-title">본인 인증 후<br>주문을 진행해요</h2>
-    <p class="step-sub">안전하고 빠르게, 30초면 끝나요.</p>
+    <h2 class="step-title">주문 전에<br>본인 인증부터 할게요</h2>
+    <p class="step-sub">고객님 정보를 안전하게 지키기 위한 절차예요. 30초면 끝나요.</p>
 
     <div id="authGate">
       <div class="auth-cta-card" id="authCtaCard">
@@ -665,14 +667,15 @@
           <svg viewBox="0 0 24 24" width="34" height="34" fill="#16192b" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 20.5C4 16.4 7.6 14 12 14s8 2.4 8 6.5V21H4z"/></svg>
         </div>
         <div class="auth-hero-title">휴대폰으로 본인 인증</div>
-        <p class="auth-flow-note">안전한 거래를 위한 필수 절차예요.<span class="afm-sub">30초면 끝나요 · 최초 1회</span></p>
-        <div class="auth-warn">지금은 <b>주문하는 회원 본인</b> 인증이에요. 부모님 등 타인 명의는 다음 단계에서 따로 등록해요.</div>
-        <button class="auth-cta-btn" onclick="openAuth()">본인 인증 시작하기</button>
+        <p class="auth-flow-note">통신사 인증으로 빠르게 끝나요.<span class="afm-sub">30초 · 최초 1회</span></p>
+        <button class="auth-cta-btn" onclick="startAuth('bonin')">제 이름으로 시작할게요</button>
+        <button class="auth-cta-sub" onclick="startAuth('tain')">부모님 등 다른 분 이름으로 하고 싶어요</button>
+        <p class="auth-foot-note">어느 쪽을 고르셔도 먼저 고객님 휴대폰 인증을 한 번 거쳐요. 계약 명의는 다음 단계에서 정할 수 있어요.</p>
       </div>
       <div class="auth-done hidden" id="authDoneCard">
         <span class="ad-ico">✅</span>
         <div>
-          <div class="auth-done-title" id="memberDoneTitle">본인인증 완료 (변슬기)</div>
+          <div class="auth-done-title" id="memberDoneTitle">휴대폰 인증을 마쳤어요 (변슬기)</div>
           <div class="auth-done-sub">1997-08-11 / 010-XXXX-XXXX</div>
         </div>
       </div>
@@ -720,36 +723,36 @@
 
       <div id="nameSection">
       <div class="field-label">계약 명의 <span class="required">*</span></div>
-      <p class="name-help">계약서·현금지원금에 표기될 명의예요. <b>회원 본인</b>이면 ‘본인 명의’, <b>부모님 등 다른 분</b> 명의면 ‘타인 명의’를 선택하세요.</p>
+      <p class="name-help">계약서·현금지원금에 들어갈 이름이에요. <b>고객님 본인</b> 이름으로 하시면 ‘내 명의’, <b>부모님 등 다른 분</b> 이름으로 하시면 ‘본인 외 명의’를 골라 주세요.</p>
       <div class="toggle-group" id="nameGroup">
         <label id="tabBonin" onclick="selectName('bonin')">
           <div class="check-icon">✓</div>
-          <div class="opt-txt"><div class="opt-title">본인 명의 <span class="name-default">기본값</span></div><div class="opt-ex" id="boninEx">변슬기</div></div>
+          <div class="opt-txt"><div class="opt-title">내 명의 <span class="name-default">기본값</span></div><div class="opt-ex" id="boninEx">변슬기</div></div>
         </label>
         <label id="tabTain" onclick="selectName('tain')">
           <div class="check-icon">✓</div>
-          <div class="opt-txt"><div class="opt-title">타인 명의</div><div class="opt-ex" id="tainEx">변슬기 외 명의</div></div>
+          <div class="opt-txt"><div class="opt-title">본인 외 명의</div><div class="opt-ex" id="tainEx">변슬기 외 다른 분</div></div>
         </label>
       </div>
 
-    <!-- 본인 명의: 등록된 본인 프로필 노출 -->
+    <!-- 내 명의: 등록된 본인 프로필 노출 -->
     <div id="boninArea" class="hidden">
       <div class="info-box">
         <span class="icon">ℹ️</span>
-        <span>현금지원금은 본인 명의 계좌로만 수령 가능합니다.</span>
+        <span>현금지원금은 고객님 명의 계좌로 보내드려요.</span>
       </div>
     </div>
 
-    <!-- 타인 명의: 회원 + 계약자(타인) 두 명의로 수령 -->
+    <!-- 본인 외 명의: 회원 + 계약자(다른 분) 두 명의로 수령 -->
     <div id="tainArea" class="holder-area hidden">
-      <!-- 추가된 계약자(타인) 목록 (여러 명 가능, 스크롤) -->
+      <!-- 추가된 계약자(다른 분) 목록 (여러 명 가능, 스크롤) -->
       <div id="holderList" class="holder-list"></div>
       <!-- 계약자 추가 버튼 (계속 추가 가능) -->
-      <button class="btn-add-holder" onclick="openHolderAuth()">+ 계약자(타인)명의 인증하고 추가</button>
+      <button class="btn-add-holder" onclick="openHolderAuth()">+ 다른 분 명의 인증하고 추가하기</button>
 
       <div class="info-box">
         <span class="icon">ℹ️</span>
-        <span>현금지원금은 본인(렌트리 회원) 명의 혹은 계약자 명의 둘 중 하나의 계좌로 수령 가능합니다.</span>
+        <span>현금지원금은 고객님(회원) 또는 등록한 다른 분 중 한 분의 계좌로 보내드려요.</span>
       </div>
     </div>
     </div><!-- /nameSection -->
@@ -868,15 +871,15 @@
 
   <!-- STEP 5 -->
   <div class="step" id="step-6">
-    <h2 class="step-title">혜택 관련 특약사항에<br>동의해 주세요</h2>
-    <p class="step-sub">아래 내용을 확인하고 동의해 주세요.</p>
+    <h2 class="step-title">혜택 약속 몇 가지만<br>확인하고 갈게요</h2>
+    <p class="step-sub">지원금 혜택을 받으시려면 아래 내용을 함께 확인해 주세요.</p>
 
     <div class="terms-box">
-      <p>• 13개월 내 해지 시 지원금이 고객에게 청구됩니다.</p>
-      <p>• 3개월 이상 렌탈요금 체납 시 지원금이 고객에게 청구됩니다.</p>
-      <p>• 당월 설치 기준 [견적/지원금]입니다. 익월 설치 시 지원금이 변동될 수 있습니다.</p>
-      <p>• 지원금과 위약금은 별개입니다.</p>
-      <p class="highlight">• ⭐ 타사 보상은 현장에 꼭 타사 정수기가 있어야만 프로모션 적용이 가능합니다.</p>
+      <p>• 가입 후 13개월 안에 해지하면, 받으신 지원금을 다시 돌려주셔야 해요.</p>
+      <p>• 렌탈 요금이 3개월 이상 밀리면, 받으신 지원금을 다시 돌려주셔야 해요.</p>
+      <p>• 지원금은 이번 달 설치 기준이에요. 다음 달에 설치하면 금액이 달라질 수 있어요.</p>
+      <p>• 지원금과 위약금은 서로 다른 항목이에요.</p>
+      <p class="highlight">• ⭐ 타사 보상 혜택은 설치 현장에 기존 타사 정수기가 있어야 받을 수 있어요.</p>
     </div>
     <label class="terms-check" id="termsCheck" onclick="toggleTerms(this)">
       <input type="checkbox" id="agreeCheck" />
@@ -959,6 +962,9 @@
   let nameType = 'bonin';       // 'bonin' | 'tain'
   let payMethod = 'card';       // 'card' | 'bank'
   let typeChosen = true;        // 계약자 유형 기본 '개인' 선택
+  let nameIntent = 'bonin';     // STEP1에서 고른 의향: 'bonin'(내 이름) | 'tain'(다른 분 이름)
+  // STEP1 두 버튼: 어느 쪽이든 회원 본인인증 먼저, 의향만 기억해 STEP2 명의를 미리 선택
+  function startAuth(intent) { nameIntent = intent; openAuth(); }
   let nameChosen = false;       // 계약 명의 선택 여부
 
   // DOM순: 1=인증 2=명의 3=주소 4=결제 5=사업자서류 6=특약. 사업자만 5 포함.
@@ -998,9 +1004,9 @@
   function nextStep() {
     if (currentStep === 1 && !authed) { openAuth(); return; }
     if (currentStep === 2 && !step2Ready()) {
-      if (!typeChosen) showHint('계약자 유형을 선택해 주세요');
-      else if (!isBusiness && nameType === 'tain') showHint('타인 명의를 등록해 주세요');
-      else showHint('계약 명의를 선택해 주세요');
+      if (!typeChosen) showHint('계약자 유형을 골라 주세요');
+      else if (!isBusiness && nameType === 'tain') showHint('명의를 받을 다른 분을 등록해 주세요');
+      else showHint('계약 명의를 골라 주세요');
       return;
     }
     const seq = getSeq();
@@ -1071,7 +1077,7 @@
     div.innerHTML =
       '<span class="holder-radio"></span>' +
       '<div class="profile-avatar" style="background:#b5651d;flex-shrink:0;">' + nm[0] + '</div>' +
-      '<div style="flex:1;min-width:0;"><div class="profile-name">' + nm + ' <span class="role-tag">계약자</span></div>' +
+      '<div style="flex:1;min-width:0;"><div class="profile-name">' + nm + ' <span class="role-tag">명의자</span></div>' +
       '<div class="profile-meta">1990-01-01 · 010-****-****</div></div>' +
       '<button class="holder-del" onclick="removeHolder(event, this)">삭제</button>';
     list.appendChild(div);
@@ -1116,8 +1122,8 @@
       html += row('가입유형', v('bizType') || '미선택');
       html += row('사업자번호', v('bizRegNum'));
     } else {
-      html += row('명의', nameType === 'tain' ? '타인 명의' : '본인 명의');
-      if (nameType === 'tain') html += row('계약자', holderCount() > 0 ? holderCount() + '명 등록' : '미등록');
+      html += row('명의', nameType === 'tain' ? '본인 외 명의' : '내 명의');
+      if (nameType === 'tain') html += row('명의자', holderCount() > 0 ? holderCount() + '명 등록' : '미등록');
     }
     html += '<div class="summary-group-title">설치 주소</div>';
     html += row('주소', addr);
@@ -1159,11 +1165,11 @@
   let authTarget = null; // 'member' | 'holder'
   function openAuth() {
     authTarget = 'member';
-    prepAuthFlow('회원 본인인증을<br>진행해 주세요', '명의도용·사기 방지를 위해 회원님 본인을 휴대폰으로 인증합니다. 최초 1회만 진행돼요.');
+    prepAuthFlow('휴대폰으로<br>본인 인증할게요', '고객님 명의를 안전하게 지키기 위한 절차예요. 처음 한 번만 인증하면 돼요.');
   }
   function openHolderAuth() {
     authTarget = 'holder';
-    prepAuthFlow('계약자 명의 인증을<br>진행해 주세요', '계약자(타인) 명의를 휴대폰으로 인증합니다. 인증 후 언제든 삭제할 수 있어요.');
+    prepAuthFlow('명의자 분의<br>휴대폰 인증이 필요해요', '계약 명의로 등록할 다른 분의 휴대폰 인증이에요. 등록한 뒤에도 언제든 삭제할 수 있어요.');
   }
   function prepAuthFlow(title, desc) {
     document.getElementById('authFlowTitle').innerHTML = title;
@@ -1219,11 +1225,12 @@
       authed = true;
       // 본인인증 결과로 받은 고객 성함 (데모: 변슬기). 실제로는 인증 응답값을 넣음
       const memberName = '변슬기';
-      document.getElementById('memberDoneTitle').textContent = '회원 본인인증 완료 (' + memberName + ')';
+      document.getElementById('memberDoneTitle').textContent = '휴대폰 인증을 마쳤어요 (' + memberName + ')';
       document.getElementById('boninEx').textContent = memberName;
-      document.getElementById('tainEx').textContent = memberName + ' 외 명의';
+      document.getElementById('tainEx').textContent = memberName + ' 외 다른 분';
       document.getElementById('authCtaCard').classList.add('hidden');
       document.getElementById('authDoneCard').classList.remove('hidden');
+      selectName(nameIntent); // STEP1에서 고른 의향대로 STEP2 계약 명의 미리 선택
       updateUI(); // STEP1 '다음' 버튼 노출 → STEP2(계약 명의)로 진행
     } else if (authTarget === 'holder') {
       addHolder(); // 계약자 1명 추가(여러 명 가능)
