@@ -333,9 +333,10 @@
     border: 1.5px solid #95dcae;
     border-radius: var(--radius-sm);
     padding: 16px;
-    margin-bottom: 24px;
+    margin-bottom: 18px;
     font-size: 14px; font-weight: 700; color: var(--ink);
   }
+  .done-q { font-size: 15px; font-weight: 800; color: var(--ink); margin: 0 2px 12px; }
   .auth-done .ad-ico { font-size: 22px; line-height: 1.2; }
   .auth-done-title { font-size: 16px; font-weight: 800; color: var(--ink); letter-spacing: -.2px; }
   .auth-done-sub { font-size: 13px; color: var(--ink-sub); font-weight: 500; margin-top: 3px; }
@@ -671,12 +672,17 @@
         <button class="auth-cta-btn" onclick="openAuth()">휴대폰으로 본인 인증하기</button>
         <p class="auth-foot-note">주문을 시작하려면 먼저 고객님 본인 인증을 해야 해요. 부모님 등 다른 분 이름으로 계약하고 싶으셔도, 인증을 마친 뒤 다음 단계에서 명의를 정할 수 있어요.</p>
       </div>
-      <div class="auth-done hidden" id="authDoneCard">
-        <span class="ad-ico">✅</span>
-        <div>
-          <div class="auth-done-title" id="memberDoneTitle">휴대폰 인증을 마쳤어요 (변슬기)</div>
-          <div class="auth-done-sub">1997-08-11 / 010-XXXX-XXXX</div>
+      <div class="hidden" id="authDoneCard">
+        <div class="auth-done">
+          <span class="ad-ico">✅</span>
+          <div>
+            <div class="auth-done-title" id="memberDoneTitle">휴대폰 인증을 마쳤어요 (변슬기)</div>
+            <div class="auth-done-sub">1997-08-11 / 010-XXXX-XXXX</div>
+          </div>
         </div>
+        <p class="done-q">이제 어떤 명의로 계약할까요?</p>
+        <button class="auth-cta-btn" onclick="chooseName('bonin')"><span id="boninBtnName">변슬기</span> 명의로 하고 싶어요</button>
+        <button class="auth-cta-sub" onclick="chooseName('tain')">다른 명의로 하고 싶어요</button>
       </div>
     </div>
   </div>
@@ -990,8 +996,8 @@
     document.getElementById('btnPrev').style.display = idx > 0 ? 'block' : 'none';
     const btnNext = document.getElementById('btnNext');
     btnNext.textContent = idx === seq.length - 1 ? '주문 확정하기' : '다음';
-    // STEP1(인증)은 본인인증 완료 전까지 '다음' 숨김(카드 내 버튼으로 인증)
-    btnNext.style.display = (currentStep === 1 && !authed) ? 'none' : 'block';
+    // STEP1(인증)은 카드 내 버튼(인증·명의 선택)으로 진행 → 하단 '다음' 항상 숨김
+    btnNext.style.display = (currentStep === 1) ? 'none' : 'block';
     // STEP2(명의) 미완료 시 '다음' 잠금 표시(클릭 시 안내)
     btnNext.classList.toggle('locked', currentStep === 2 && !step2Ready());
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -1040,6 +1046,8 @@
       updateUI(); // '다음' 활성/비활성 갱신
     }
   }
+  // STEP1 인증 완료 카드의 두 버튼: 명의 선택 후 STEP2(계약 명의)로 이동
+  function chooseName(type) { selectName(type); nextStep(); }
   // 명의 선택 분기: 본인 → 회원 프로필 / 타인 → 회원 + 계약자(추가형)
   function selectName(type) {
     nameChosen = true;
@@ -1224,6 +1232,7 @@
       document.getElementById('memberDoneTitle').textContent = '휴대폰 인증을 마쳤어요 (' + memberName + ')';
       document.getElementById('boninEx').textContent = memberName;
       document.getElementById('tainEx').textContent = memberName + ' 외 다른 분';
+      document.getElementById('boninBtnName').textContent = memberName;
       document.getElementById('authCtaCard').classList.add('hidden');
       document.getElementById('authDoneCard').classList.remove('hidden');
       updateUI(); // STEP1 '다음' 버튼 노출 → STEP2(계약 명의)로 진행
