@@ -298,9 +298,10 @@
   .auth-cta-sub { width: 100%; margin-top: 10px; padding: 14px; background: #fff; color: var(--primary); border: 1.5px solid var(--primary); border-radius: var(--radius-sm); font-size: 15px; font-weight: 700; cursor: pointer; }
   .auth-cta-sub:hover { background: var(--primary-soft); }
   .auth-foot-note { margin: 14px 2px 0; font-size: 12px; line-height: 1.6; color: var(--ink-muted); text-align: center; }
-  .name-confirm { display: flex; align-items: center; gap: 10px; padding: 14px 16px; border: 1.5px solid var(--primary); background: var(--primary-soft); border-radius: var(--radius-sm); margin-bottom: 14px; }
+  .name-confirm { display: flex; align-items: center; gap: 10px; padding: 14px 16px; border: 1px solid var(--line); background: #f7f8fb; border-radius: var(--radius-sm); margin-bottom: 14px; }
+  .name-confirm::before { content: "✓"; font-size: 13px; font-weight: 800; color: #1f9d57; width: 20px; height: 20px; display: inline-flex; align-items: center; justify-content: center; background: #e3f6ea; border-radius: 50%; flex-shrink: 0; }
   .name-confirm .nc-info { flex: 1; min-width: 0; display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
-  .name-confirm .nc-label { font-size: 12px; font-weight: 800; color: var(--primary); padding: 2px 8px; background: #fff; border-radius: 6px; }
+  .name-confirm .nc-label { font-size: 12px; font-weight: 700; color: var(--ink-sub); padding: 2px 8px; background: #eceef3; border-radius: 6px; }
   .name-confirm .nc-name { font-size: 15px; font-weight: 800; color: var(--ink); }
   .name-confirm .nc-change { flex-shrink: 0; background: none; border: none; font-size: 13px; font-weight: 700; color: var(--primary); text-decoration: underline; cursor: pointer; }
   .name-help { margin: -4px 0 12px; font-size: 12.5px; line-height: 1.6; color: var(--ink-sub); }
@@ -769,8 +770,8 @@
 
   <!-- STEP 3: 설치 주소 -->
   <div class="step" id="step-3">
-    <h2 class="step-title">설치 주소를<br>알려주세요</h2>
-    <p class="step-sub">제품이 설치될 주소를 입력해 주세요.</p>
+    <h2 class="step-title">제품 받으실<br>곳이 어디인가요?</h2>
+    <p class="step-sub">설치 기사님이 방문할 주소예요. 동·호수까지 정확히 알려주세요.</p>
 
     <div class="input-group">
       <div class="field-label">설치 주소 <span class="required">*</span></div>
@@ -787,8 +788,8 @@
 
   <!-- STEP 3 -->
   <div class="step" id="step-4">
-    <h2 class="step-title">월 요금 결제 정보를<br>알려주세요</h2>
-    <p class="step-sub">매월 자동 결제될 수단을 등록해 주세요.</p>
+    <h2 class="step-title">매달 요금은<br>어떻게 낼까요?</h2>
+    <p class="step-sub">매월 렌탈 요금이 자동으로 결제될 수단을 등록해 주세요.</p>
 
     <div class="field-label">결제 방식 <span class="required">*</span></div>
     <div class="payment-group">
@@ -880,7 +881,7 @@
 
   <!-- STEP 5 -->
   <div class="step" id="step-6">
-    <h2 class="step-title">혜택 약속 몇 가지만<br>확인하고 갈게요</h2>
+    <h2 class="step-title">혜택 관련 특약사항에<br>동의해 주세요</h2>
     <p class="step-sub">지원금 혜택을 받으시려면 아래 내용을 함께 확인해 주세요.</p>
 
     <div class="terms-box">
