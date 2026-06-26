@@ -853,19 +853,19 @@
 
   <!-- STEP 4 -->
   <div class="step" id="step-5">
-    <h2 class="step-title">사업자 서류를<br>첨부해 주세요</h2>
-    <p class="step-sub">세금계산서 발행과 사업자 계약 확인을 위해 필요해요. (가입유형·사업자번호는 1단계에서 확인했어요)</p>
+    <h2 class="step-title">사업자 서류만<br>올려주시면 끝이에요</h2>
+    <p class="step-sub">세금계산서 발행과 계약 확인에 필요해요. 사업자 정보는 앞에서 입력하셨으니, 서류만 올려주세요.</p>
 
     <div class="input-group">
       <div class="field-label">이메일 <span class="required">*</span></div>
       <input type="email" placeholder="이메일을 입력해 주세요" />
-      <p class="field-hint">기재해 주신 이메일로 세금계산서가 발행됩니다.</p>
+      <p class="field-hint">입력하신 이메일로 세금계산서를 보내드려요.</p>
     </div>
     <div class="input-group">
       <div class="field-label">사업자등록증 <span class="required">*</span></div>
       <div class="file-upload" id="up1" onclick="document.getElementById('fileReg').click()">
         <div class="upload-icon">📄</div>
-        파일을 선택하거나 여기에 끌어다 놓으세요
+        여기를 눌러 사진을 올리거나 끌어다 놓으세요
       </div>
       <input type="file" id="fileReg" style="display:none" onchange="markFile('up1', this)" />
     </div>
@@ -873,7 +873,7 @@
       <div class="field-label">결제수단(통장/카드) 사진 <span class="required">*</span></div>
       <div class="file-upload" id="up2" onclick="document.getElementById('fileCard').click()">
         <div class="upload-icon">📷</div>
-        파일을 선택하거나 여기에 끌어다 놓으세요
+        여기를 눌러 사진을 올리거나 끌어다 놓으세요
       </div>
       <input type="file" id="fileCard" style="display:none" onchange="markFile('up2', this)" />
     </div>
@@ -911,8 +911,8 @@
     <!-- 1단계: 정보 입력 -->
     <div id="authStep1">
       <div class="modal-icon">📱</div>
-      <div class="modal-title" id="authFlowTitle">본인인증을<br>진행해 주세요</div>
-      <div class="modal-desc" id="authFlowDesc">휴대폰 본인인증으로 명의를 확인합니다.</div>
+      <div class="modal-title" id="authFlowTitle">휴대폰으로<br>본인 확인할게요</div>
+      <div class="modal-desc" id="authFlowDesc">통신사 인증으로 빠르게 확인해요.</div>
       <div class="modal-form">
         <div class="input-group">
           <div class="field-label">통신사 <span class="required">*</span></div>
@@ -946,7 +946,7 @@
     <div id="authStep2" class="hidden">
       <div class="modal-icon">🔑</div>
       <div class="modal-title">인증번호를<br>입력해 주세요</div>
-      <div class="modal-desc">문자로 받은 6자리 인증번호를 입력하세요.<br><span style="font-size:12px;">(데모 — 아무 값이나 입력하면 인증됩니다)</span></div>
+      <div class="modal-desc">문자로 받으신 6자리 숫자를 입력해 주세요.<br><span style="font-size:12px;">(데모 — 아무 값이나 입력하면 인증돼요)</span></div>
       <div class="modal-form">
         <div class="input-group">
           <div class="field-label">인증번호 <span class="required">*</span></div>
