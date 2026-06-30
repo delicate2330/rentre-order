@@ -738,7 +738,7 @@
 
       <div id="nameSection">
       <div class="field-label">계약 명의</div>
-      <div class="name-confirm">
+      <div class="name-confirm" id="nameConfirmChip">
         <div class="nc-info">
           <span class="nc-label" id="ncLabel">내 명의</span>
           <span class="nc-name" id="ncName">변슬기</span>
@@ -1065,17 +1065,23 @@
   }
   function applyBonin() {
     nameType = 'bonin';
+    // 내 명의: 확인 칩(이름) 노출
+    document.getElementById('nameConfirmChip').classList.remove('hidden');
     document.getElementById('ncLabel').textContent = '내 명의';
     document.getElementById('ncName').textContent = MEMBER_NAME;
     document.getElementById('boninArea').classList.remove('hidden');
     document.getElementById('tainArea').classList.add('hidden');
+    document.getElementById('step1Title').innerHTML = '내 명의로<br>계약해요';
+    document.getElementById('step1Sub').textContent = '명의를 확인해 주세요.';
   }
   function applyTain() {
     nameType = 'tain';
-    document.getElementById('ncLabel').textContent = '본인 외 명의';
-    document.getElementById('ncName').textContent = MEMBER_NAME + ' 외 다른 분';
+    // 다른 명의: 중복되는 이름 칩은 숨기고, 추가 버튼/목록만 노출
+    document.getElementById('nameConfirmChip').classList.add('hidden');
     document.getElementById('tainArea').classList.remove('hidden');
     document.getElementById('boninArea').classList.add('hidden');
+    document.getElementById('step1Title').innerHTML = '다른 명의로<br>계약해요';
+    document.getElementById('step1Sub').textContent = '명의를 선택해 주세요.';
   }
   // 계약자(타인) 명의: 여러 명 추가 가능, 각자 삭제 가능
   const HOLDER_NAMES = ['홍길동', '김영희', '이민수', '박지원', '최수정', '정해성', '오지훈', '한가람'];
